@@ -759,7 +759,7 @@ the client and the service.
 
 Aside from the **Data Port**, the message includes:
 
-* The **Data Protocl** which is the protocol to use over the **Data Port**, and which side the service will
+* The **Data Protocol** which is the protocol to use over the **Data Port**, and which side the service will
 	assume, indicated by setting the `accept` or `offer` property on the message
 	to the Data Protocol  name.
 * A response **Match Set** which will include a **Match Option** for the **Data Protocol**,
@@ -782,4 +782,48 @@ A `connect` message looks like this:
 }
 ```
 
-Once the client recieves the `connect` message,
+Once the client recieves the `connect` message, both client and service have
+a direct `MessageChannel` over which to send data, and a matching accept/offer
+pair and a **session** is established. 
+
+#### Client/Service: The Session
+
+The **simple offer/exchange protocol** ("SOAP") is the standard means of transferring
+data using Poppy I/O using the data port. However, any protocol may be used if
+both sides agree to it.
+
+The protocol has four steps:
+
+1. The `offer` side sends a message to the `accept` side over the data channel containing the **object**, along with any message ports.
+2. The `accept` side sends a response message to the `offer` side over the data channel, which may contain no data.
+3. The `offer` side sends a **release** message to the `accept` side over the data channel, indicating it
+	has received the reply and the channel can be closed. The contents of the message are ignored.
+4. The `accept` sends a message consisting of the string `release` on the control channel.
+
+The reason for step 3 is to prevent a service poppy from closing too
+soon. The client may detect the popup closing before the response is received,
+in which case it may ignore the message because it thinks the client is closed.
+
+Step 4 is to signal the session may be closed. However, in a client/poppy exchange,
+the poppy always closes the session unless there is an error causing the session
+to be **cancelled**, and the service knows based on the data channel exchange 
+that closing the session is safe. This is because the poppy is what the user is interacting
+with and may have information it needs to display to the user. Step 4 is for
+direct client-to-client sessions. In that case, the "service" role is assumed
+by an intermedary (e.g. a browser extension) and needs to be informed it's time
+to close the session.
+
+#### Non-SOAP exchanges
+
+If `offer` and `accept` may be for a protocol that does not use SOAP. In that case,
+one side must send a `release` message on the control channel to indicate it is
+safe to close the session to any intermediary if the session is a client-to-client
+peer-to-peer exchange.
+
+#### Service: Close the Session
+
+After the primary exchange is complete, the poppy may close automatically, or
+it may stay open if it has extra information to display to the user. The client
+should not close the session, or the dialog, unless there is an error. In the
+event that the client does close the dialog, it should display a message to the
+user explaining why.
