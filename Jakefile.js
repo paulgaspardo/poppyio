@@ -37,6 +37,8 @@ const copiedFiles = glob
 	.filter(name => name.indexOf('$') === -1)
 	.map(name => name.replace('src/',''));
 
+const bundleEntrypoints = fs.readdirSync('./src/bundle');
+
 const langTags = fs.readdirSync('./strings').map(name => name.replace('.toml',''));
 
 // Task Definitions
@@ -62,7 +64,7 @@ task('default', [].concat(
 	langTags.map(tag => `target/bundle/poppyio.add.${tag}.js`),
 	langTags.map(tag => `target/bundle/poppyio.${tag}.js`),
 	// Base (non-localized) bundles
-	'target/bundle/poppyio.js',
+	bundleEntrypoints.map(name => `target/bundle/${name}`),
 	// .min.js files not mentioned but also get generated for all bundle/ files.
 	// (except for the add.${tag}.js files which are pretty small already)
 ));
@@ -130,11 +132,11 @@ rule(/\.js$/, '.mjs', function () {
 	write(this.name.replace('target/', 'target/amd/'), amd);
 });
 
-// Rollup base bundles
-file('target/bundle/poppyio.js', compiledModules.map(name => `target/${name}.mjs`).concat('src/bundle/poppyio.js'), async () => {
-	// this bundle will also get localized.
-	await makeBundle('src/bundle/poppyio.js', 'target/bundle/poppyio.js');
-});
+bundleEntrypoints.forEach(name => {
+	file(`target/bundle/${name}`, compiledModules.map(name => `target/${name}.mjs`).concat(`src/bundle/${name}`), async () => {
+		await makeBundle('src/bundle/' + name, 'target/bundle/' + name);
+	});
+})
 async function makeBundle(entrypoint, outputFile) {
 	// First rollup ES6 then transpile to ES5
 	let rolledup = await rollup.rollup({

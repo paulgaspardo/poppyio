@@ -42,6 +42,9 @@ definitely incomplete and the parts that aren't are probably wrong :) *
       - [Service: Signal it is `listen`ing](#service-signal-it-is-listening)
       - [Client: Indicate its `request`](#client-indicate-its-request)
       - [Service: Connect](#service-connect)
+      - [Client/Service: The Session](#clientservice-the-session)
+      - [Non-SOAP exchanges](#non-soap-exchanges)
+      - [Service: Close the Session](#service-close-the-session)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
