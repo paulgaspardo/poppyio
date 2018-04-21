@@ -209,7 +209,7 @@ export class Dialog implements Matcher {
 			document.body.appendChild(proxy);
 			const sandbox = 'allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock';
 			try {
-				// TypeScript 2.8.2 DOM lib has the wrong type
+				// TypeScript 2.8.3 DOM lib has the wrong type
 				(<DOMSettableTokenList>proxy.sandbox).value = sandbox;
 			} catch (e) {
 				// Used to be a string and still is in UC Browser. 
