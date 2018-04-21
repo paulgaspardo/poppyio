@@ -1,0 +1,32 @@
+{
+  "private": true,
+  "name": "kowloon",
+  "version": "0.0.1",
+  "description": "Build poppyio",
+  "main": "index",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "jake",
+    "clean": "jake clean",
+    "rebuild": "jake rebuild",
+    "watch": "jake watch",
+    "serve": "http-server",
+    "typedoc": "typedoc --out --includeDeclarations --excludeExternals --out target/doc/ src/"
+  },
+  "author": "Paul Gaspardo <paul@paulgaspardo.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "escodegen": "^1.9.1",
+    "esprima": "^4.0.0",
+    "glob": "^7.1.2",
+    "html-minifier": "^3.5.15",
+    "http-server": "^0.11.1",
+    "jake": "^8.0.16",
+    "promiscuous": "^0.7.1",
+    "rollup": "^0.58.0",
+    "toml": "^2.3.3",
+    "typedoc": "^0.11.1",
+    "typescript": "^2.8.1",
+    "uglify-js": "^3.3.21"
+  }
+}

@@ -1,0 +1,1 @@
+export function crypto_sign_open(out: Uint8Array, signedIn: Uint8Array, signedInLen: number, publicKey: Uint8Array): number;

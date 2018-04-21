@@ -1,0 +1,35 @@
+<div id='box'>
+	<div id='main'>
+		<div id='title'>
+			<h1 id='clientName'></h1>
+			<h2 id='activityTitle'></h2>
+		</div>
+		<form id='theForm'>
+			<input id='input' type='text' name='poppy_identifier'>
+			<button data-t='go'></button>
+		</form>
+		<div id='message'>
+			<p data-t='explanation'></p>
+		</div>
+	</div>
+</div>
+<div id='modal'>
+	<div id='modal-box'>
+		<div class='modal-body' id='loading'>
+			<p data-t='checking'></p>
+			<div class='modal-buttons'>
+				<button data-modal-action='cancel' data-t='cancel'></button>
+			</div>
+		</div>
+		<div class='modal-body' id='found'>
+			<p data-t='sendingYou'></p>
+		</div>
+		<div class='modal-body' id='wontWork'>
+			<p><strong></strong></p>
+			<p data-t='wontWorkNowWhat'></p>
+			<div class='modal-buttons'>
+				<button data-modal-action='cancel' id='wontWork-ok' data-t='ok'></button>
+			</div>
+		</div>
+	</div>
+</div>

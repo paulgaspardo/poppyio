@@ -1,0 +1,15 @@
+lang = 'en'
+langName = 'English'
+
+connectPoppy='Connect Poppy'
+
+explanation='''Enter the domain name of a website above to connect to its poppy.'''
+checking='Checking if {search} will work...'
+sendingYou='Sending you to {search}...'
+wontWork="It looks like {search} won't work."
+wontWorkNowWhat="""{search} doesn't appear to offer a poppy. However it's possible that you
+typed in the name incorrectly."""
+
+ok='OK'
+go='Go'
+cancel='Cancel'
