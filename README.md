@@ -78,7 +78,7 @@ Here's what `poppyio` looks like. (You don't have to use ES6.)
     });
     if (pick) {
       let img = new Image;
-      img.src = pick.File.location || URL.createObjectUrl(pick.File.contents);
+      img.src = pick.File.location || URL.createObjectURL(pick.File.contents);
       document.body.appendChild(img);
     }
   }

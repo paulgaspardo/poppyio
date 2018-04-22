@@ -180,6 +180,7 @@ file('target/package.json', ['src/package.json', 'target', 'package.json'], () =
 	let template = JSON.parse(read('src/package.json'));
 	template.version = version;
 	write('target/package.json', JSON.stringify(template, undefined, 2));
+	write('target/bower.json', JSON.stringify({ name: "poppyio" }, undefined, 2));
 });
 
 // Generate localized files
