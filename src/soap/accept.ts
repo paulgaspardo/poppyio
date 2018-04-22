@@ -1,5 +1,5 @@
 import { Matcher, MatchOption, Session } from "../core/common";
-import { connectSOAP, moveAspectsUp } from "./common";
+import { connectSOAP, moveAspectsUp, Kinds } from "./common";
 
 export { acceptObject as default }
 
@@ -18,8 +18,8 @@ export { acceptObject as default }
  * @param from Session, Dialog or Opener to accept the object from
  * @param args Request details
  */
-export function acceptObject(from: Session|Matcher, args: AcceptObjectArgs): Promise<AcceptedObject|undefined> {
-	return beginAcceptObject(from, args).then(acceptedObject => {
+export function acceptObject(from: Session|Matcher, kinds: Kinds, reply?: Reply): Promise<AcceptedObject|undefined> {
+	return beginAcceptObject(from, kinds).then(acceptedObject => {
 		// Not an error, session never established.
 		if (!acceptedObject) {
 			return Promise.resolve(undefined);
@@ -29,9 +29,9 @@ export function acceptObject(from: Session|Matcher, args: AcceptObjectArgs): Pro
 			// Note if reply is a function it may call acceptedObject.resolve()
 			// itself so whatever value is returned is basically ignored.
 			let replyValuePromise = Promise.resolve(
-				typeof args.reply === 'function'
-				? args.reply(acceptedObject)
-				: args.reply);
+				typeof reply === 'function'
+				? reply(acceptedObject)
+				: reply);
 			return replyValuePromise.then(replyValue => {
 				return acceptedObject.resolve(replyValue).then(success => {
 					if (success) return Promise.resolve(acceptedObject);
@@ -59,7 +59,7 @@ export function acceptObject(from: Session|Matcher, args: AcceptObjectArgs): Pro
  * @param from Session, Dialog or Opener to accept the object from
  * @param args Request details
  */
-export function beginAcceptObject(from: Session|Matcher, args: BeginAcceptObjectArgs): Promise<AcceptedObject|undefined> {
+export function beginAcceptObject(from: Session|Matcher, args: Kinds): Promise<AcceptedObject|undefined> {
 	return connectSOAP(from, args, 'accept').then(session => {
 		// Not an error, session never established.
 		if (!session) {
@@ -113,6 +113,8 @@ export function beginAcceptObject(from: Session|Matcher, args: BeginAcceptObject
 		});
 	});
 }
+
+export type Reply = any|PromiseLike<any>|((accepted:AcceptedObject)=>any)|((accepted:AcceptedObject)=>PromiseLike<any>);
 
 /**
  * Optinos for acceptObject()

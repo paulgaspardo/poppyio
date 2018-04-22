@@ -1,12 +1,12 @@
 **Note:** The files you see here aren't the `poppyio` package, they're the files
-used to build the `poppyio` package. To do that run `npm build`; the generated
+used to build the `poppyio` package. To do that run `npm run build`; the generated
 package will be in the `target/` directory.
 
 ----------------------------------------
 # Poppy I/O
 
-*Note: This README, and Poppy I/O in general, is an early work in progress. It's
-definitely incomplete and the parts that aren't are probably wrong :) *
+*Note: This README, and Poppy I/O in general, is an active work in progress. It's
+definitely incomplete and the parts that aren't are probably wrong.*
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -14,7 +14,6 @@ definitely incomplete and the parts that aren't are probably wrong :) *
 
 - [What is it?](#what-is-it)
 - [The Elements of Poppy I/O](#the-elements-of-poppy-io)
-  - [Try it out](#try-it-out)
   - [Naming](#naming)
 - [System Requirements](#system-requirements)
   - [For Browsers](#for-browsers)
@@ -51,7 +50,7 @@ definitely incomplete and the parts that aren't are probably wrong :) *
 # What is it?
 
 Poppy I/O is a concept for a JavaScript API and set of protocols for cloud file
-pickers and other similar things - *poppies* in Poppy I/O parlance.
+pickers and other similar things - in Poppy I/O parlance, *poppies*.
 
 A **poppy** is a web page that provides a service to other, client web pages,
 and is activated by the client web page opening the poppy in a popup dialog
@@ -59,108 +58,99 @@ window. By this definition [Dropbox Choosers](https://www.dropbox.com/developers
 and [Twitter Web Intents](https://dev.twitter.com/web/intents) would count as poppies
 (although they don't use Poppy I/O).
 
-The idea of Poppy I/O is to define a common API to allow client
-apps to work with any number of poppies without modification, and beyond that
-make it so that users themselves can pick the poppies they want to use - essentially
-the same idea as [Web Intents](https://github.com/PaulKinlan/WebIntents).
+The idea of Poppy I/O is to define a common API that lets allow client
+apps work with any number of poppies without modification, and beyond that
+decouple clients and services to such an extent that users themselves are able to
+pick the poppy they want - basically what [Web Intents](https://github.com/PaulKinlan/WebIntents)
+hoped to accomplish.
 
-Here's what `poppyio` looks like. (You don't have to use ES6.)
+Here's what `poppyio` looks like.
+
 ```html
 <button id='pickButton'>Pick Photo</button>
 <script type='module'>
-  import { Poppy, acceptObject } from "https://js.poppy.io/0.0.1/use-en.mjs";
+  import Poppy from "https://js.poppy.io/0.0.2-dev.0/use-en.mjs";
   pickButton.onclick = async () => {
-    let pick = await acceptObject(Poppy.any(), {
-      kind: "File",
-      hint: {
-        type: ["image/*"]
-      }
-    });
+    let pick = await Poppy.accept("image/*");
     if (pick) {
       let img = new Image;
-      img.src = pick.File.location || URL.createObjectURL(pick.File.contents);
+      img.src = pick.data.location || URL.createObjectURL(pick.data.contents);
       document.body.appendChild(img);
     }
   }
 </script>
 ```
 
+But you don't need a browser that supports ES modules or `async`/`await` for
+Poppy I/O to work; here's the same code in more conventional ES5.
+
+```html
+<script src="https://js.poppy.io/0.0.2-dev.0/target/bundle/poppyio.en.min.js" nomodule></script>
+<script nomodule>
+  poppyio.Poppy.any().iePrelude = "/"; // hack for Internet Explorer 10
+  pickButton.onclick = function () {
+    poppyio.Poppy.accept("image/*").then(function (pick) {
+      if (pick) {
+        var img = new Image;
+        img.src = pick.data.location || URL.createObjectURL(pick.data.contents);
+        document.body.appendChild(img);
+      }
+    });
+  }
+</script>
+```
+
 # The Elements of Poppy I/O
 
-Poppy I/O starts with a **client app**, a web page the user opened up on their own
-in a browser tab.
+Poppy I/O is all about two webpages, one of which has something to **offer**
+which the other page **accepts**. One of those
+pages is the **client** application - the page the user is already on - and the other is
+the **poppy** - a service webpage that launches in a popup **dialog window** to perform
+some action on behalf of the client page.
 
-The client app gives the user the option to perform some activity with a **poppy**.
-That might be something like:
+That action might be something like:
+* Picking a file to use in the app. *The client accepts a file offered by the poppy.*
+* Saving a file they created in the app. *The poppy accepts a file offered by the client.*
+* Sharing a link. *The poppy accepts a link offered by the client.*
 
-* Picking a file to use in the app
-* Saving a file they created in the app
-* Sharing a link
+The client might start out with a specific poppy in mind, in which case it just opens up
+its URL in the dialog window. But the Poppy I/O ideal is that *the user gets
+to pick the poppy.*
 
-The client app may provide the option to perform the action with a specific poppy,
-or let the user pick a poppy of their own. The app should always let the user pick
-their own poppy in addition to any preset options.
+How the user picks their poppy is through the **launcher**. This is a page that opens
+up inside the dialog window if the client app doesn't open a specific poppy. It
+provides a user interface to let the user pick one instead.
 
-Either way, in response to a user action (like clicking a "Pick with Poppy" button),
-the client app opens a **dialog**, the popup window that will host the poppy.
-The dialog may be opened by the client app directly or intercepted by a
-**browser extension**, if one is installed.
+The launcher would ideally be something provided in the user's browser, and
+Poppy I/O is designed to work with an optional **browser extension** to provide that
+(it only exists as a proof of concept at this point).
 
-If the dialog was opened with no poppy in mind, a **launcher** view opens up in the dialog
-to let the user pick the poppy they wish to use. The launcher is provided by
-the browser extension if it opened the dialog, otherwise the client has to
-display it. In addition to possibly offering a menu of suggested, bookmarked, or recent
-poppies, the launch page should also provide a way to pick a poppy by typing in
-its **domain name** directly.
+But without a browser extension, the client can provide a launcher of its own,
+or delegate it to a centralized directory launcher. To allow users to select
+poppies not in any directory, there's a **domain resolution procedure** to take
+a user-entered domain name and determine if there's a poppy at the domain, and what
+its URL is. (The `poppyio` JavaScript library includes a minimal embedded "starter" launcher).
 
-Entering in a poppy by domain name uses a **domain resolution** procedure to detect if a
-poppy is present on that domain and determine its URL. This can be dangerous if
-the user enters a domain name incorrectly - for example if they intend to upload
-a file to `dropbox.com` but accidentally type `dropbox.cm` and send the file
-there instead - so a safety check should be performed on any entered domain, and
-any failing check shouldn't let the user proceed without a scary warning. `poppyio`
+*Note that it can be dangerous to send the user to a poppy by domain name if
+the user enters it incorrectly - for example if they intend to upload a file to
+`dropbox.com` but accidentally type `dropbox.cm` and send the file there instead -
+so a safety check should be performed on any entered domain, Poppy I/O
 includes a feature called **Namecheck** where services can provide digital
-certificates verifying a domain as not misleading.
+certificates signed by some authority verifying a domain as not misleading.
+That authority is currently me.
 
-Once the poppy is opened in the dialog, it can connect to the client to transfer
-data.
-
-The basic action in Poppy I/O is sending a single object from one **peer**
-(client or service) to another, and optionally receiving a response. One side **offers** an object,
-and the other **accepts** it. 
-
-* If a client is picking a file, it is accepting a file the poppy is offering.
-* If a client is sending a file, it is offering a file for the poppy to accept.
-* If a client is sharing a link, it is offering a link for the poppy to accept.
-
-Beyond simple objects, `MessagePort`s may be sent with an offer to allow for
-more complex exchanges. There's also the option of bypassing the **simple offer/accept protocol**
-("[S](http://harmful.cat-v.org/software/xml/soap/simple)OAP") entirely and run
-a different protocol over the `MessageChannel` it uses.
-
-The client indicates to the service what it can accept and/or offer in a **matchset**,
-which the service can use to figure out if it's able to **match** one of the
-client's **offers**. If it's able to accept something the client is offering, or
-offer the client is accepting, a connection can be made. The accept/offer pairing
-also allows for the possibility of clients connecting directly to each other,
-as long as one side is accepting what another is offering.
-
-After a match is made and the poppy is ready to exchange data with the client,
-it **commits** to a match and sends a response back to the client indicating
-what its accepting or offering, and the offer side sends its object to the
-accept side and receives the response.
-
-After the user finishes interacting with the poppy and whatever action
-was requested is performed, the poppy dialog closes and the session is complete.
-It's up to the poppy to decide when to close since it's the poppy is what has the
-user's attention.
-
-## Try it out
-
-* [primitive.5apps.com](https://primitive.5apps.com) - a modified version of
-	[primitive.js](https://ondras.github.io/primitive.js/) (which in turn is a
-	JavaScript port of the original [Primitive](https://github.com/fogleman/primitive) in Go)
-	using Poppy I/O to pick and save photos.
+So an example of how things might work would be:
+1. You've signed up to a website and want to upload a profile photo.
+2. You see the site lets you do that using Poppy I/O, and click the "Pick From Poppy" button.
+3. You don't have a Poppy I/O browser extension installed (because one doesn't exist yet), 
+  but the launcher provided by the website lets you enter the domain of the poppy you want.
+4. You keep your photos on your own [Nextcloud](https://nextcloud.com/) install
+  with a Poppy I/O app (which also doesn't exist yet), so you type in the domain of your VPS.
+5. The launcher throws up a scary warning about the name being unverified.
+6. But you expected that since you never submitted it for Namecheck, so you click "I
+  understand the risks" or whatever and get sent to your Nextcloud poppy.
+7. You pick the photo you want.
+8. The photo gets sent back to the setup page and the poppy closes automatically.
 
 ## Naming
 
@@ -230,9 +220,9 @@ The script bundles are located in the `bundle` directory of the package. Everyth
 gets exported into the `poppyio` global namespace object.
 
 * `bundle/poppyio.[lang].js` contains everything you need in a single file, in non-mified form
-	* `bundle/poppyio.[lang].min.js` is the minified version
+  * `bundle/poppyio.[lang].min.js` is the minified version
 * `bundle/poppyio.add.[lang].js` adds an additional language to the single-file bundle.
-	* There is no minified version
+  * There is no minified version
 
 
 ### ES Modules
@@ -274,7 +264,7 @@ a `"use-*"` module for the appropriate language to use; it will be installed on 
 from the `"index"` module, so that should be all you need to import. For example:
 
 ```
-	import "poppyio/use-en";
+  import "poppyio/use-en";
 ```
 You can do `"use-*"` for more than one language if your application is multilingual.
 
@@ -283,38 +273,38 @@ You can do `"use-*"` for more than one language if your application is multiling
 If you're using a `<script>` bundle, use a bundle with the appropriate language
 tag in the filename. For example:
 ```
-	<script src="/lib/poppyio/bundle/poppyio.en.min.js"></script>
+  <script src="/lib/poppyio/bundle/poppyio.en.min.js"></script>
 ```
 
 ### Picking an Image
 
 ```
 pickButton.onclick = function () {
-	return poppyio.acceptObject(
-		new poppyio.DialogOpener({
-			poppyUrl: "https://www.exampe.com/poppy.html"
-		}),
-		{
-			kind: "File",
-			hint: {
-				type: ["image/*", ".jpg", ".jpeg", ".png"]
-			}
-		}
-	).then(function (pick) {
-		if (!pick) return;
-		if (!pick.File) return Promise.reject(Error("Missing File"));
-		var img = new Image;
-		img.crossDomain = true;
-		if (pick.File.location) {
-			img.src = pick.File.location;
-		} else if (pick.File.contents) {
-			img.src = URL.createObjectURL(pick.File.contents);
-			URL.revokeObjectURL(img.src);
-		} else {
-			return Promise.reject(Error("No URL or blob"));
-		}
-		return Promise.resolve(img);
-	});
+  return poppyio.acceptObject(
+    new poppyio.DialogOpener({
+      poppyUrl: "https://www.exampe.com/poppy.html"
+    }),
+    {
+      kind: "File",
+      hint: {
+        type: ["image/*", ".jpg", ".jpeg", ".png"]
+      }
+    }
+  ).then(function (pick) {
+    if (!pick) return;
+    if (!pick.File) return Promise.reject(Error("Missing File"));
+    var img = new Image;
+    img.crossDomain = true;
+    if (pick.File.location) {
+      img.src = pick.File.location;
+    } else if (pick.File.contents) {
+      img.src = URL.createObjectURL(pick.File.contents);
+      URL.revokeObjectURL(img.src);
+    } else {
+      return Promise.reject(Error("No URL or blob"));
+    }
+    return Promise.resolve(img);
+  });
 };
 ```
 
@@ -327,90 +317,90 @@ A dialog is a popup window, so it needs to be opened in response to a user actio
 like clicking a button.
 
 ```
-	return poppyio.acceptObject(
+  return poppyio.acceptObject(
 ```
 The core operations of `acceptObject` and `offerObject` are the same for clients
 and services, so are functions and not methods. However the `Opener` subclass
 adds them as methods for convenience.
 
 ```
-		new poppyio.DialogOpener({
-			poppyUrl: "https://www.exampe.com/poppy.html"
-		}),
+    new poppyio.DialogOpener({
+      poppyUrl: "https://www.exampe.com/poppy.html"
+    }),
 ```
 The first parameter to `acceptObject` is where we are accepting the object from.I
 In this case, a `DialogOpener` object. A `DialogOpener` opens a dialog popup. The
 `poppyUrl` specifies that it will load a poppy directly and not a launch page.
 
 ```
-		{
-			kind: "File",
-			hint: {
-				type: ["image/*", ".jpg", ".jpeg", "gif"]
-			}
-		}
+    {
+      kind: "File",
+      hint: {
+        type: ["image/*", ".jpg", ".jpeg", "gif"]
+      }
+    }
 ```
 This is what we are accepting.
 * Kind is the kind of object, in this case `File`.
 * Hint is an object with extra details about the `File` we are accepting. What
-	goes inside a hint depends on the object type.
-	* The `type` indicates the file types we will accept. Both mime types and
-		file extensions are allowed.
+  goes inside a hint depends on the object type.
+  * The `type` indicates the file types we will accept. Both mime types and
+    file extensions are allowed.
 
 ```
-	).then(function (accepted) {
+  ).then(function (accepted) {
 ```
 All the asynchronous operations in `poppyio` use Promises.
 
 ```
-		if (!accepted) return;
+    if (!accepted) return;
 ```
 The client doesn't treat it as an error if we didn't get a response. That means
 we never matched with a service.
 
 * The user could have closed the window without picking a service
 * The user may have picked an incompatible service, but the service is responsible
-	for displaying an error in that case.
+  for displaying an error in that case.
 
 We can't tell what the reason is.
 
 ```
-		if (!accepted.File) return Promise.reject(Error("Missing File"));
+    if (!accepted.File) return Promise.reject(Error("Missing File"));
 ```
 If we did get a response, but it doesn't have the data we need, then it's an error.
 
 
 ```
-		var img = new Image;
-		img.crossDomain = true;
+    var img = new Image;
+    img.crossDomain = true;
 ```
 As a rule, any URLs used for file transfer must support CORS unless you indicate
 otherwise.
 
 ```
-		if (pick.File.location) {
-			img.src = pick.File.location;
+    if (pick.File.location) {
+      img.src = pick.File.location;
 ```
 One way to send a file is by URL, in the `location` property.
 
 ```
-		} else if (pick.File.contents) {
-			img.src = URL.createObjectURL(pick.File.contents);
-			URL.revokeObjectURL(img.src);
-		}
+    } else if (pick.File.contents) {
+      img.src = URL.createObjectURL(pick.File.contents);
+      URL.revokeObjectURL(img.src);
+    }
 ```
 Files may also be sent by blob, in the `contents` property.
 
 ```
-		} else {
-			return Promise.reject(Error("No URL or blob"));
-		}
+    } else {
+      return Promise.reject(Error("No URL or blob"));
+    }
 ```
 Poppy I/O doesn't do validation of the objects sent between peers.
 
 ```
-		return Promise.resolve(img);
-	});
+    return Promise.resolve(img);
+  });
 };
 ```
 Finally return the image.
@@ -437,7 +427,7 @@ import { DialogOpener, acceptObject } from "poppyio";
 
 var opener = new DialogOpener({ url: "https://www.example.com/poppy.html" });
 acceptObject(opener, { kind: "File" }).then(function (pick) {
-	if (pick && pick.File) console.log(pick.File.location || pick.File.contents && "Blob");
+  if (pick && pick.File) console.log(pick.File.location || pick.File.contents && "Blob");
 });
 ```
 The constructor accepts an object
@@ -445,11 +435,11 @@ The constructor accepts an object
 #### `DialogOpener` properties
 
 * `launcher` - the launcher to use to display a user interface if the user is
-	picking a poppy. Can be the URL of a web page or a function.
-	* `opener.launcher = "/poppyio/launcher.html"`
+  picking a poppy. Can be the URL of a web page or a function.
+  * `opener.launcher = "/poppyio/launcher.html"`
 * `poppyUrl` - the URL of the poppy to launch. If set, other options are mostly
-	irrelevant.
-	* `opener.poppyUrl = "https://www.example.com/poppy"`
+  irrelevant.
+  * `opener.poppyUrl = "https://www.example.com/poppy"`
 * `
 
 ### Using the `Opener` class
@@ -475,7 +465,7 @@ Compare, using `DialogOpener`:
 import { DialogOpener, acceptObject } from "poppyio"
 
 acceptObject(new DialogOpener({ poppyUrl: "https://www.example.com/poppy.html" })), {
-	kind: "File"
+  kind: "File"
 });
 ```
 
@@ -485,7 +475,7 @@ Using `Opener`:
 import Opener from "poppyio"
 
 Opener.with({ poppyUrl: "https://www.example.com/poppy.html" }).acceptObject({
-	kind: "File"
+  kind: "File"
 });
 ```
 
@@ -496,17 +486,17 @@ This opens a dialog with the default launcher and no other options. The user
 picks the poppy.
 
 ```
-	import { Opener, offerObject } from "poppyio";
+  import { Opener, offerObject } from "poppyio";
 
-	var opener = Opener.any(); // DialogOpener with only default options
-	offerObject(opener, {
-		kind: "File",
-		post: {
-			File: {
-				location: "https://www.example.com/upload.zip"
-			}
-		}
-	});
+  var opener = Opener.any(); // DialogOpener with only default options
+  offerObject(opener, {
+    kind: "File",
+    post: {
+      File: {
+        location: "https://www.example.com/upload.zip"
+      }
+    }
+  });
 
 ```
 
@@ -515,7 +505,7 @@ picks the poppy.
 This is a shorthand for `Opener.any().with()`.
 
 ```
-	var opener = Opener.with({ url: "https://www.exmple.com/poppy.html" });
+  var opener = Opener.with({ url: "https://www.exmple.com/poppy.html" });
 ```
 
 # Protocol

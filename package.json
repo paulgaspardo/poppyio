@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "kowloon",
-  "version": "0.0.1",
+  "version": "0.0.2-dev.0",
   "description": "Build poppyio",
   "main": "index",
   "scripts": {
@@ -11,7 +11,7 @@
     "rebuild": "jake rebuild",
     "watch": "jake watch",
     "serve": "http-server",
-    "typedoc": "typedoc --out --includeDeclarations --excludeExternals --out target/doc/ src/"
+    "typedoc": "typedoc --out --includeDeclarations --excludeExternals --out target/doc/ target/"
   },
   "author": "Paul Gaspardo <paul@paulgaspardo.com>",
   "license": "MIT",

@@ -205,7 +205,7 @@ langTags.forEach(langTag => {
 			$LangTag$: langTag
 		}));
 	});
-	// use-[lang] modules install strings and set up base PoppyOpener to use
+	// use-[lang] modules install strings and set up base Poppy DialogOpener to use
 	// embedded launcher
 	file(`target/use-${langTag}.mjs`, [`src/use-$LangTag$.mjs`], () => {
 		write(`target/use-${langTag}.mjs`, replace(read('src/use-$LangTag$.mjs'), {
@@ -223,13 +223,13 @@ langTags.forEach(langTag => {
 	file(`target/bundle/poppyio.${langTag}.js`, [`target/bundle/poppyio.js`, `target/bundle/poppyio.add.${langTag}.js`], () => {
 		let bundle = read('target/bundle/poppyio.js');
 		let bundleMin = read('target/bundle/poppyio.min.js');
-		let add = `poppyio.Opener.base.lang="${langTag}";` + read(`target/bundle/poppyio.add.${langTag}.js`);
+		let add = `poppyio.Poppy.base.lang="${langTag}";` + read(`target/bundle/poppyio.add.${langTag}.js`);
 		write(`target/bundle/poppyio.${langTag}.js`, bundle + add);
 		write(`target/bundle/poppyio.${langTag}.min.js`, bundleMin + add);
 	});
 	// poppyio.add.[lang].js bundle files to add additional languages to 
 	file(`target/bundle/poppyio.add.${langTag}.js`, [`strings/${langTag}.toml`, `target/bundle/poppyio.js`], () => {
 		let strings = toml.parse(read(`strings/${langTag}.toml`));
-		write(`target/bundle/poppyio.add.${langTag}.js`, `poppyio.Opener.base.strings.push(poppyio.${langSym}=${JSON.stringify(strings)});`);
+		write(`target/bundle/poppyio.add.${langTag}.js`, `poppyio.Poppy.base.strings.push(poppyio.${langSym}=${JSON.stringify(strings)});`);
 	});
 });

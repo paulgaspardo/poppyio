@@ -1,6 +1,5 @@
 import { DialogOpener, DialogOpenerProperties } from './core/dialog-opener';
-import { Opener } from './opener';
-import { Dialog } from './index';
+import { Poppy } from './poppy';
 
 // Export core
 export { Matcher, MatchOption, Session, validateMatchlist } from './core/common';
@@ -13,18 +12,11 @@ export { acceptObject, beginAcceptObject, AcceptObjectArgs, AcceptedObject, Begi
 export { offerObject, beginOfferObject, OfferObjectArgs, BeginOfferObjectArgs, ObjectOffer, AcceptedObjectOffer } from './soap/offer';
 
 // Export user-friendly opener
-export { Opener, Opener as default } from "./opener";
+export { Poppy, Poppy as default } from "./poppy";
+
+export { PoppyService } from "./poppy-service";
 
 /**
  * Version of poppyio.js
  */
 export const version: string = '$Version$';
-
-export class Poppy {
-	static any(): DialogOpener {
-		return Opener.any();
-	}
-	static with(properties: DialogOpenerProperties): DialogOpener {
-		return Opener.with(properties);
-	}
-}

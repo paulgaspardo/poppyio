@@ -34,7 +34,7 @@ export interface DialogOpenerProperties {
 	 * can access [[Dialog.popup]] for the window and [[Dialog.opener]]
 	 * for the `DialogOpener`.
 	 */
-	launcher?: string|((dialog: Dialog) => void);
+	launcher?: string|((dialog: Dialog, matchlist:MatchOption[]) => void);
 
 	/**
 	 * The page to use for the IE Hack.
@@ -112,7 +112,7 @@ export class DialogOpener implements DialogOpenerProperties, Matcher {
 	clientName?: string|null;
 	activityName?: string|null;
 	strings: Strings[];
-	launcher?: string|((session: Dialog) => void);
+	launcher?: string|((session: Dialog, matchlist:MatchOption[]) => void);
 	origins?: string[]|null;
 	lang?: string|null;
 	poppyUrl?: string|null;
@@ -151,7 +151,7 @@ export class DialogOpener implements DialogOpenerProperties, Matcher {
 				if (this.poppyUrl) {
 					dialog.popup.location.replace(this.poppyUrl);
 				} else if (typeof this.launcher === 'function') {
-					this.launcher(dialog);
+					this.launcher(dialog, validatedMatchlist);
 				} else if (typeof this.launcher === 'string') {
 					dialog.popup.location.replace(this.launcher);
 				}

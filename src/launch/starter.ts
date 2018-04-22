@@ -1,6 +1,8 @@
 import { resolveName } from './resolve';
 import { Dialog } from '../core/dialog';
 import { DialogOpener, DialogOpenerProperties, Strings, getOrigin } from '../core/dialog-opener';
+import { MatchOption } from '../core/common';
+import { match } from 'minimatch';
 
 interface State {
 	openModal?: any;
@@ -19,7 +21,7 @@ declare const $DialogHtml$: string;
  * @param session 
  * @param options 
  */
-export function starter(dialog: Dialog) {
+export function starter(dialog: Dialog, matchlist: MatchOption[]) {
 	let leaving = false;
 	let popup = dialog.popup!;
 	let document = popup.document;
@@ -72,6 +74,15 @@ export function starter(dialog: Dialog) {
 	};
 	document.write($DialogHtml$);
 	applyBaseStyles(style);
+
+	let matchInfo = $('#matchInfo')!;
+	matchlist.forEach(matchOption => {
+		let matchDetail = document.createElement('li');
+		matchDetail.textContent = (matchOption.accept ? 'Accept ' : 'Offer ') + (matchOption.accept || matchOption.offer) + ' '
+			+ (matchOption.hint && Array.isArray(matchOption.hint.types) ? matchOption.hint.types.join(', ') : '');
+		matchInfo.appendChild(matchDetail);
+	});
+
 	setState({focused: $('#input')});
 
 	$('#theForm')!.addEventListener('submit', e => {

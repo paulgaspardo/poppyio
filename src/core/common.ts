@@ -144,7 +144,7 @@ export interface MatchOption {
 	 * Used for indicating extra capabilities and helping filter out
 	 * inappropriate options.
 	 */
-	hint?: object;
+	hint?: any;
 }
 
 /**

@@ -1,16 +1,16 @@
 import { Matcher, MatchOption, Session } from "../core/common";
-import { connectSOAP, moveAspectsUp } from './common';
+import { connectSOAP, moveAspectsUp, Kinds } from './common';
 
 export { offerObject as default }
 
-export function offerObject(to: Matcher|Session, args: OfferObjectArgs): Promise<AcceptedObjectOffer|undefined> {
-	return beginOfferObject(to, args).then(offer => {
+export function offerObject(to: Matcher|Session, kinds: Kinds, data: OfferData): Promise<AcceptedObjectOffer|undefined> {
+	return beginOfferObject(to, kinds).then(offer => {
 		if (!offer) return Promise.resolve(undefined);
 		try {
 			return Promise.resolve(
-				typeof args.post === 'function'
-				? args.post(offer)
-				: args.post
+				typeof data === 'function'
+				? data(offer)
+				: data
 			).then(post => {
 				return offer.resolve(post).then(accepted => {
 					if (accepted) return Promise.resolve(accepted);
@@ -25,8 +25,8 @@ export function offerObject(to: Matcher|Session, args: OfferObjectArgs): Promise
 }
 
 
-export function beginOfferObject(to: Matcher|Session, args: BeginOfferObjectArgs): Promise<ObjectOffer|undefined> {
-	return connectSOAP(to, args, 'offer').then(session => {
+export function beginOfferObject(to: Matcher|Session, kinds: Kinds): Promise<ObjectOffer|undefined> {
+	return connectSOAP(to, kinds, 'offer').then(session => {
 		if (!session) return Promise.resolve(undefined);
 		let resolved: Promise<AcceptedObjectOffer>|undefined = undefined;
 		let resolve = (data?: any, transfer?: any[]) => {
@@ -60,8 +60,9 @@ export function beginOfferObject(to: Matcher|Session, args: BeginOfferObjectArgs
 export interface OfferObjectArgs extends BeginOfferObjectArgs {
 	kind: string|string[];
 	hint?: any;
-	post: any|((offer: ObjectOffer)=>any)|Promise<any>|((offer: ObjectOffer)=>Promise<any>);
 }
+
+export type OfferData = any|((offer: ObjectOffer)=>any)|Promise<any>|((offer: ObjectOffer)=>Promise<any>);
 
 export interface BeginOfferObjectArgs {
 	kind: string|string[];
