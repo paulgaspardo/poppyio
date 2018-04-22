@@ -1,10 +1,10 @@
-export * from "./index";
-export { strings, $LangSym$ } from "./strings-$LangTag$";
+export * from "./index.mjs";
+export { strings, $LangSym$ } from "./strings-$LangTag$.mjs";
 export { Opener as default }
 
-import { Opener } from "./opener";
-import { strings } from "./strings-$LangTag$";
-import { starter } from "./launch/starter";
+import { Opener } from "./opener.mjs";
+import { strings } from "./strings-$LangTag$.mjs";
+import { starter } from "./launch/starter.mjs";
 
 let base = Opener.any();
 base.strings.push(strings);

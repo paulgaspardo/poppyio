@@ -1,0 +1,34 @@
+<button id='pickButton'>Pick Photo</button>
+<script type='module'>
+	import { Poppy, acceptObject } from "/target/use-en.mjs";
+	pickButton.onclick = async () => {
+		let pick = await acceptObject(Poppy.any(), {
+			kind: "File",
+			hint: {
+				type: ["image/*"]
+			}
+		});
+		if (pick) {
+			let img = new Image;
+			img.src = pick.File.location || URL.createObjectUrl(pick.File.contents);
+			document.body.appendChild(img);
+		}
+	}
+</script>
+<script src="/target/bundle/poppyio.en.min.js" nomodule></script>
+<script nomodule>
+	pickButton.onclick = function () {
+		poppyio.acceptObject(poppyio.Poppy.any(), {
+			kind: "File",
+			hint: {
+				type: ["image/*"]
+			}
+		}).then(function (pick) {
+			if (pick) {
+				var img = new Image;
+				img.src = pick.File.location || URL.createObjectUrl(pick.File.contents);
+				document.body.appendChild(img);
+			}
+		})
+	}
+</script>

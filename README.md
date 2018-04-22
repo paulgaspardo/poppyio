@@ -59,54 +59,31 @@ window. By this definition [Dropbox Choosers](https://www.dropbox.com/developers
 and [Twitter Web Intents](https://dev.twitter.com/web/intents) would count as poppies
 (although they don't use Poppy I/O).
 
-The idea of Poppy I/O is to define a common set of protocols to allow client
+The idea of Poppy I/O is to define a common API to allow client
 apps to work with any number of poppies without modification, and beyond that
 make it so that users themselves can pick the poppies they want to use - essentially
 the same idea as [Web Intents](https://github.com/PaulKinlan/WebIntents).
 
-To support this Poppy I/O provides two ways for users to choose poppies without
-relying on a central directory service: hooks to allow a browser extension to
-present a user interface for selecting a poppy, and a procedure for resolving
-a user-entered domain name to a poppy URL.
-
-Here's some sample code to see what using the `poppyio` JavaScript API looks like.
-This example uses fancy ES6+ features available in the latest browsers, but that's
-not required.
+Here's what `poppyio` looks like. (You don't have to use ES6.)
 ```
 <button id='pickButton'>Pick Photo</button>
-<div id='pickResult'></div>
 <script type='module'>
-	import Opener from "/bin/poppyio/use-en.mjs";
+	import { Poppy, acceptObject } from "/bin/poppyio/use-en.mjs";
 	pickButton.onclick = async () => {
-		try {
-			let pick = await Opener
-				.with({ poppyUrl: "https://example.com/poppy" })
-				.accept({
-					kind: "File",
-					hint: {
-						type: ["image/*"]
-					}
-				});
-			if (pick) {
-				let img = new Image;
-				if (pick.File.location) {
-					img.src = pick.File.location;
-				} else {
-					img.src = URL.createObjectURL(pick.File.contents);
-					URL.revokeObjectURL(img.src);
-				}
-				pickResult.innerHTML = '';
-				pickResult.appendChild(img);
-			}
-		} catch (e) {
-			pickResult.innerText = `Error: ${e.message || e}`;
-		}	
+    let pick = await acceptObject(Poppy.any(), {
+      kind: "File",
+      hint: {
+        type: ["image/*"]
+      }
+    });
+    if (pick) {
+      let img = new Image;
+      img.src = pick.File.location || URL.createObjectUrl(pick.File.contents);
+      document.body.appendChild(img);
+    }
 	}
 </script>
 ```
-What that does is give you a button you can press to launch `https://example.com/poppy`
-as a poppy. That poppy lets you pick a photo to send back to the client page 
-that opened it, which then shows it to you.
 
 # The Elements of Poppy I/O
 
