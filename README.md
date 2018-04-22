@@ -65,11 +65,11 @@ make it so that users themselves can pick the poppies they want to use - essenti
 the same idea as [Web Intents](https://github.com/PaulKinlan/WebIntents).
 
 Here's what `poppyio` looks like. (You don't have to use ES6.)
-```
+```js
 <button id='pickButton'>Pick Photo</button>
 <script type='module'>
-	import { Poppy, acceptObject } from "/bin/poppyio/use-en.mjs";
-	pickButton.onclick = async () => {
+  import { Poppy, acceptObject } from "/bin/poppyio/use-en.mjs";
+  pickButton.onclick = async () => {
     let pick = await acceptObject(Poppy.any(), {
       kind: "File",
       hint: {
@@ -81,7 +81,7 @@ Here's what `poppyio` looks like. (You don't have to use ES6.)
       img.src = pick.File.location || URL.createObjectUrl(pick.File.contents);
       document.body.appendChild(img);
     }
-	}
+  }
 </script>
 ```
 
