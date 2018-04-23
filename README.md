@@ -2,7 +2,7 @@
 used to build the `poppyio` package. To do that run `npm run build`; the generated
 package will be in the `target/` directory.
 
-You can also browse the contents of the package at https://js.poppy.io/0.0.2-dev.0/
+You can also browse the contents of the package at https://js.poppy.io/0.0.2-dev.1/
 
 ----------------------------------------
 # Poppy I/O
@@ -34,7 +34,7 @@ Here's what it looks like.
 ```html
 <button id='pickButton'>Pick Photo</button>
 <script type='module'>
-  import Poppy from "https://js.poppy.io/0.0.2-dev.0/use-en.mjs";
+  import Poppy from "https://js.poppy.io/0.0.2-dev.1/use-en.mjs";
   pickButton.onclick = async () => {
     let pick = await Poppy.accept("image/*");
     if (pick) {
@@ -50,7 +50,7 @@ But you don't need a browser that supports ES modules or `async`/`await` for
 Poppy I/O to work; here's the same code in more conventional ES5.
 
 ```html
-<script src="https://js.poppy.io/0.0.2-dev.0/target/bundle/poppyio.en.min.js" nomodule></script>
+<script src="https://js.poppy.io/0.0.2-dev.1/target/bundle/poppyio.en.min.js" nomodule></script>
 <script nomodule>
   poppyio.Poppy.any().iePrelude = "/"; // hack for Internet Explorer 10
   pickButton.onclick = function () {
@@ -214,14 +214,14 @@ but you can still add it as a dependency to your `package.json`. The package
 contains both ES modules in `.mjs` files and CommonJS ES5 modules in adjacent
 `.js` files. AMD versions of the modules are under the `amd` directory.
 ```
-  $ npm install https://js.poppy.io/0.0.2-dev.0/poppyio-0.0.2-dev.0.tgz
+  $ npm install https://js.poppy.io/0.0.2-dev.1/poppyio-0.0.2-dev.1.tgz
 ```
 You can also `bower install` the same URL if you use Bower.
 
 The simplest way to get started is to use the browser bundle. Everything get
 exported to the `poppyio` global namespace:
 ```html
-  <script src="https://js.poppy.io/0.0.2-dev.0/bundle/poppyio.en.js"></script>
+  <script src="https://js.poppy.io/0.0.2-dev.1/bundle/poppyio.en.js"></script>
 ```
 
 `import` or `require` the `"use-en"` module (in whatever format you're using)

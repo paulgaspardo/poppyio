@@ -76,20 +76,17 @@ export class Poppy extends DialogOpener implements SoapMixin {
 	
 	offer: (kinds: Kinds, data: OfferData) => Promise<AcceptedObjectOffer|undefined>;
 	static offer(kinds: Kinds, data: OfferData): Promise<AcceptedObjectOffer|undefined> {
-		return this.offer(kinds, data);	
+		return this.any().offer(kinds, data);	
 	}
 	
 	/**
 	 * Invoke [[beginOfferObject]] with this [[Opener]] as the `to`
 	 * @param args 
 	 */
-	
-	beginOffer(kinds: Kinds): Promise<ObjectOffer|undefined> {
-		return beginOfferObject(this, kinds);
-	}
 
+	beginOffer: (kinds: Kinds) => Promise<ObjectOffer|undefined>;
 	static beginOffer(kinds: Kinds): Promise<ObjectOffer|undefined> {
-		return this.beginOffer(kinds);
+		return this.any().beginOffer(kinds);
 	}
 
 }
