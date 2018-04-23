@@ -11,7 +11,7 @@
     "rebuild": "jake rebuild",
     "watch": "jake watch",
     "serve": "http-server",
-    "typedoc": "typedoc --out --includeDeclarations --excludeExternals --out target/doc/ target/"
+    "typedoc": "typedoc --includeDeclarations --excludeExternals --out target/typedocs/ target/"
   },
   "author": "Paul Gaspardo <paul@paulgaspardo.com>",
   "license": "MIT",
