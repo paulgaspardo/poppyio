@@ -81,12 +81,12 @@ export interface DialogOpenerProperties {
 	/**
 	 * URL of the poppy to open. If set the launcher is skipped
 	 */
-	poppyUrl?: string|null;
+	url?: string|null;
 
 	/**
 	 * Domain of a poppy to resolve using the Domain Resolution Procedure
 	 */
-	poppyDomain?: string|null;
+	domain?: string|null;
 
 	/**
 	 * Whether to perform a namecheck. 
@@ -115,8 +115,8 @@ export class DialogOpener implements DialogOpenerProperties, Matcher {
 	launcher?: string|((session: Dialog, matchlist:MatchOption[]) => void);
 	origins?: string[]|null;
 	lang?: string|null;
-	poppyUrl?: string|null;
-	poppyDomain?: string|null;
+	url?: string|null;
+	domain?: string|null;
 	namecheck?: boolean|null;
 
 	/**
@@ -148,8 +148,9 @@ export class DialogOpener implements DialogOpenerProperties, Matcher {
 			let validatedMatchlist = validateMatchlist(matchlist);
 			dialog = (dialog && dialog.open()) || this.open();
 			if (dialog.popup) {
-				if (this.poppyUrl) {
-					dialog.popup.location.replace(this.poppyUrl);
+				if (this.url) {
+					dialog.origins.push(getOrigin(this.url));
+					dialog.popup.location.replace(this.url);
 				} else if (typeof this.launcher === 'function') {
 					this.launcher(dialog, validatedMatchlist);
 				} else if (typeof this.launcher === 'string') {
@@ -302,7 +303,7 @@ function onListen(
 		requestMessage.launch = {
 			clientName: dialog.opener!.clientName,
 			activityName: dialog.opener!.activityName,
-			service: dialog.opener!.poppyUrl
+			service: dialog.opener!.url
 		}
 	}
 	// Inform service of request and wait for connect()
