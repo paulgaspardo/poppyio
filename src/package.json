@@ -1,7 +1,7 @@
 {
 	"name": "poppyio",
 	"version": "",
-	"description": "Poppy.io JavaScript Library",
+	"description": "Poppy I/O JavaScript Library",
 	"main": "index",
 	"author": "Paul Gaspardo <paul@paulgaspardo.com>",
 	"license": "MIT"
