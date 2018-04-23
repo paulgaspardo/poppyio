@@ -70,6 +70,13 @@ which is [almost all of them](https://caniuse.com/#feat=channel-messaging).
 Internet Explorer requires a `Promise` polyfill (the bundles come with [promiscuous](https://github.com/RubenVerborgh/promiscuous)) and a
 [small hack](https://stackoverflow.com/a/36630058) (the `iePrelude` above).
 
+## Try it
+
+Check out https://primitive.5apps.com for an example client app. For a poppy to use, try:
+
+* `f4r.poppy.io` to pick an image from the Flickr Commons or upload an image to your Flickr account
+* `i3r.poppy.io` to anonymously upload an image to imgur.
+
 ## README Contents
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
