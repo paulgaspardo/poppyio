@@ -83,8 +83,17 @@ watchTask('just-watch', ['default'], function () {
 
 // The README
 // Remove everything until after the first horizontal line
-file('target/README.md', ['README.md'], () => {
+file('target/README.md', ['README.md', 'package.json'], () => {
 	let sourceReadme = read('README.md');
+
+	// Verify version URLs in README match actual version
+	let version = JSON.parse(read('package.json')).version;
+	sourceReadme.match(/js\.poppy\.io\/[0-9a-z\.\-]+/g).forEach(versionedLink => {
+		if (versionedLink !== 'js.poppy.io/' + version) {
+			throw Error(`URL ${versionedLink} doesn't have the right version`);
+		}
+	});
+	
 	let endOfLine = sourceReadme.indexOf('------\n');
 	write('target/README.md', sourceReadme.substr(endOfLine + 7));
 });
