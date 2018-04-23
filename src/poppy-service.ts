@@ -9,4 +9,7 @@ export class PoppyService {
 			callback(client, err);
 		});
 	}
+	static close() {
+		window.close();
+	}
 }
