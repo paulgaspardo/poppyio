@@ -220,9 +220,7 @@ export class Dialog implements Matcher {
 			let inject = (name: string, func: Function) => {
 				(<any>proxy.contentWindow)[name] = func;
 				if (!options!.noInject) {
-					let script = proxy.contentDocument!.createElement('script');
-					script.innerText = `${name}=${func.toString()}`;
-					proxy.contentDocument!.body.appendChild(script);
+					proxy.contentDocument!.write(`<script>${name}=${func.toString()}</script>`);
 				}
 			};
 	
