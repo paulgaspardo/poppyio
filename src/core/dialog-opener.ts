@@ -92,6 +92,18 @@ export interface DialogOpenerProperties {
 	 * Whether to perform a namecheck. 
 	 */
 	namecheck?: boolean|null;
+
+	/**
+	 * Set to true to disable <script> injection. Inline scripts are injected
+	 * as a workaround to allow poppyio to work inside sandboxed iframes.
+	 * We open the dialog window with a sandbox window as its opener, and since
+	 * we are in a sandbox and are not the opener we are not able to manage
+	 * that window. To work around this we inject a <script> tag that declares
+	 * a function we call to close or navigate the window, but if you have
+	 * a Content-Security-Policy in place that prevents inline scripts error
+	 * get logged to the console. Setting this to false will disable that.
+	 */
+	noInject?: boolean|null;
 }
 
 /**
@@ -117,7 +129,8 @@ export class DialogOpener implements DialogOpenerProperties, Matcher {
 	lang?: string|null;
 	url?: string|null;
 	domain?: string|null;
-	namecheck?: boolean|null;
+	namecheck?: boolean|null
+	noInject?: boolean|null;
 
 	/**
 	 * Constructor

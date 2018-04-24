@@ -1,0 +1,295 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset='utf-8'>
+<title>XD Paint!</title>
+
+<script src='/target/bundle/poppyio.en.js'></script>
+<script>
+	poppyio.Poppy.any().assign({
+		clientName: "XD Paint!",
+		iePrelude: "/"
+	});
+
+	function removeAllChildren(node) {
+		while (node.hasChildNodes())
+			node.removeChild(node.firstChild);
+		return node;
+	}
+
+	function getImage() {
+		poppyio.Poppy.accept("image/*").then(function (accepted) {
+			if (!accepted || !accepted.data || (!accepted.data.location && !accepted.data.contents)) return;
+			theCanvas.style.setProperty('display', 'none', '');
+			document.getElementById('msg').innerHTML = 'Loading Photo...';
+			selectedImage = new Image();
+			selectedImage.crossOrigin = 'anonymous';
+			if (accepted.data.location) {
+				selectedImage.src = accepted.data.location;
+			} else {
+				selectedImage.src = URL.createObjectURL(accepted.data.contents);
+				URL.revokeObjectURL(selectedImage.src);
+			}
+			console.log(selectedImage.src);
+			selectedImage.onload = function() {
+				console.log('image loaded');
+				theCanvas.style.setProperty('display', 'inline', '');
+				resetCanvas();
+				document.getElementById('msg').innerHTML = '';
+			}
+		}).catch(function (error) {
+			console.log(error);
+		});
+	}
+
+	addEventListener('load', function () {
+		theCanvas = document.getElementById('theCanvas');
+		context = theCanvas.getContext('2d');
+		var drawing = false;
+
+		context.fillStyle = '#ffffff';
+		context.fillRect(0,0,theCanvas.width,theCanvas.height);
+
+		setPalette({"id":92095,"title":"Giant Goldfish","userName":"manekineko","numViews":226749,"numVotes":3371,"numComments":505,"numHearts":4.5,"rank":1,"dateCreated":"2007-07-03 10:42:02","colors":["69D2E7","A7DBD8","E0E4CC","F38630","FA6900"],"colorWidths":[0.2,0.2,0.2,0.2,0.2],"description":"","url":"http://www.colourlovers.com/palette/92095/Giant_Goldfish","imageUrl":"http://www.colourlovers.com/paletteImg/69D2E7/A7DBD8/E0E4CC/F38630/FA6900/Giant_Goldfish.png","badgeUrl":"http://www.colourlovers.com/images/badges/p/92/92095_Giant_Goldfish.png","apiUrl":"http://www.colourlovers.com/api/palette/92095","jQuery1610064395222812891":{"events":{"click":[{"data":null,"namespace":"","type":"click","guid":3}]}}});
+
+		function toPoint (event, continuation) {
+			var point = event;
+			if (event.touches) {
+				if (event.touches.length != 1)
+					return;
+				event.preventDefault();
+				point = event.touches[0];
+			}
+			return continuation(point);
+		}
+		function down (evt) {
+			toPoint(evt, function (point) {
+				drawing = true;
+				context.beginPath();
+				context.moveTo(point.pageX - theCanvas.offsetLeft, point.pageY - theCanvas.offsetTop);
+			});
+		}
+		function move (evt) {
+			if (drawing) {
+				toPoint(evt, function (point) {
+					context.lineTo(point.pageX - theCanvas.offsetLeft, point.pageY - theCanvas.offsetTop);
+					context.stroke();
+				});
+			}
+		}
+		function up (evt) {
+			toPoint(evt, function (point) {
+				context.lineTo(point.pageX - theCanvas.offsetLeft, point.pageY - theCanvas.offsetTop);
+				context.stroke();
+				context.closePath();
+				drawing = false;
+			});
+		}
+
+		theCanvas.addEventListener('mousedown', down, true);
+		theCanvas.addEventListener('mousemove', move, true);
+		theCanvas.addEventListener('mouseup', up, true);
+		theCanvas.addEventListener('touchstart', down, true);
+		theCanvas.addEventListener('touchmove', move, true);
+		theCanvas.addEventListener('touchend', up, true);
+	}, false);
+
+	// https://stackoverflow.com/a/12300351
+	function dataURItoBlob(dataURI) {
+		// convert base64 to raw binary data held in a string
+		// doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+		var byteString = atob(dataURI.split(',')[1]);
+
+		// separate out the mime component
+		var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+		// write the bytes of the string to an ArrayBuffer
+		var ab = new ArrayBuffer(byteString.length);
+
+		// create a view into the buffer
+		var ia = new Uint8Array(ab);
+
+		// set the bytes of the buffer to the correct values
+		for (var i = 0; i < byteString.length; i++) {
+			ia[i] = byteString.charCodeAt(i);
+		}
+
+		// write the ArrayBuffer to a blob, and you're done
+		var blob = new Blob([ab], {type: mimeString});
+		return blob;
+
+	}
+
+	function saveCanvas(handlerUrl) {
+		var canvas = document.getElementById('theCanvas');
+
+		poppyio.Poppy.offer("image/png", function () {
+			if (typeof canvas.toBlob === 'function') {
+				return new Promise(function (resolve) {
+					canvas.toBlob(resolve, "image/png");
+				}).then(function (blob) {
+					return Promise.resolve({
+						contents: blob
+					});
+				});
+			}
+		}).then(function (result) {
+			if (!result) return;
+			var msg = document.getElementById('msg');
+			msg.textContent = 'Saved (No link given)';
+			if (!result.data || !result.data.link) {
+				msg.textContent = 'Saved. (No link given)';
+			}
+			else {
+				var link = result.data.link;
+				if (link.match(/https?\:\/\//)) {
+					var a = document.createElement('a');
+					a.setAttribute('href', link);
+					a.textContent = link;
+					msg.textContent = "Saved to ";
+					msg.appendChild(a);
+				} else {
+					a.textContent = "Saved to " + link + " (looks unsafe!)";
+				}
+			}
+		});
+
+		// cloud.requestAction({
+		//     intent: {
+		//         action: 'putContent',
+		//         contentType: 'image/png',
+		//         contentLocation: document.getElementById('theCanvas').toDataURL('image/png'),
+		//         title: 'A line drawing',
+		//         description: 'XD Project'
+		//     },
+		//     onResponse: function (response) {
+		//         var url = response.identifier;
+		//         document.getElementById('msg').innerHTML = 'saved to <a href="' + url + '">' + url + '</a>';
+		//     }
+		// });
+	}
+
+	function setPalette(newPalette) {
+		palette = newPalette;
+		removeAllChildren(document.getElementById('title')).appendChild(document.createTextNode(palette.title));
+		var paletteDiv = document.getElementById('colors');
+		var firstColor = palette.colors[0];
+		removeAllChildren(paletteDiv);
+		for (var i = 0; i < palette.colors.length; i++) {
+			var item = document.createElement('span');
+			(function () {
+			var color = palette.colors[i];
+			item.appendChild(document.createTextNode(color));
+			item.style.setProperty('background-color', '#'+color, '');
+			item.className = 'color ' + (i == 0 ? 'activeColor' : '');
+			if (i == 0) {
+				activeColorNode = item;
+				activeColorValue = '#' + color;
+				context.strokeStyle = activeColorValue;
+			}
+			var thisItemNotThatOtherOne = item;
+			item.addEventListener('click', function () {
+				activeColorNode.className = 'color';
+				activeColorValue = color;
+				thisItemNotThatOtherOne.className = 'color activeColor';
+				activeColorNode = thisItemNotThatOtherOne;
+				activeColorValue = '#' + color;
+				context.strokeStyle = activeColorValue;
+			}, false);
+			})();
+			paletteDiv.appendChild(item);
+			paletteDiv.appendChild(document.createTextNode(' '));
+		}
+	}
+
+	function choosePalette() {
+		cloud.requestAction({
+			intent: {
+				action: 'getContent',
+				handlerUrl: 'http://xdapplets.herokuapp.com/colourlovers/',
+				contentType: 'application/vnd.projectxd.colourlovers-palette+json'
+			},
+			onResponse: function (response) {
+				setPalette(response.content);
+			}
+		});
+	}
+
+	// application/json+vnd.poppyio.color-palette
+
+	function choosePallete2() {
+		acceptObject(PoppyOpener.any.with({ launch: 'http://xdapplets.herokuapp.com/colourlovers/' }), {
+			kind: 'ColorPalette'
+		}).then(function (picked) {
+			if (picked.ColorPallete) {
+
+			}
+		})
+	}
+
+	function freshCanvas() {
+		theCanvas.width = parseInt(document.getElementById('width').value);
+		theCanvas.height = parseInt(document.getElementById('height').value);
+		context.fillStyle = '#ffffff';
+		context.fillRect(0,0,theCanvas.width,theCanvas.height);
+		context.strokeStyle = activeColorValue;
+	}
+
+	function resetCanvas() {
+		if (!window.selectedImage) {
+			freshCanvas();
+		}
+		else {
+			theCanvas.width = selectedImage.width;
+			theCanvas.height = selectedImage.height;
+			context.drawImage(selectedImage, 0, 0);
+			context.strokeStyle = activeColorValue;
+		}
+	}
+
+</script>
+<style>
+	.section { margin: 1em; padding: 1em; border: 2px solid black; }
+
+	.color { cursor: pointer; border: 1px solid black; }
+	.activeColor { border-bottom: 5px solid black !important; }
+	body {
+		font-family: Helvetica, Arial, sans-serif;
+		font-size: 0.8em
+	}
+	.group {
+		padding: 0.5em
+	}
+</style>
+</head>
+<body>
+
+	<div id='toolbar'>
+		<div>
+			<span class='group'>
+				<button onclick='getImage()'>Open</button>
+			</span>
+			<span class='group'>
+				<button onclick='saveCanvas()'>Save</button>
+			</span>
+			<span class='group'>
+				<!-- <button onclick='choosePalette()'><img src='cloudtiny.png'> Palette</button> -->
+				<button onclick='resetCanvas()'>Reset</button>
+				<button onclick='freshCanvas()'>New</button>
+				width <input type='text' id='width' size='3' value='400'>
+				height <input type='text' id='height' size='3' value='300'>
+			</span>
+		</div>
+		<div id='palette'>
+			<span class='group'>
+				<span id='colors'></span>
+				<span id='title' class='color' style='border:none'></span>
+			</span>
+		</div>
+	</div>
+
+		<p><canvas style='border: 1px solid black' width='400' height='300' id='theCanvas'></canvas></p>
+		<p id='msg'></p>
+
+</body>
+</html>

@@ -19,7 +19,6 @@ export function resolveName(domain: string, namecheck?: boolean): Promise<Resolv
 		let req = new XMLHttpRequest;
 		req.open('GET', 'https://' + domain + '/.well-known/host-meta.json');
 		req.onload = () => {
-			console.log('onload');
 			if (req.status !== 200) return reject(Error('Poppy.io: lookup-error, ' + req.status));
 			try {
 				let hostMeta: any = JSON.parse(req.responseText);

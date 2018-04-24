@@ -10,7 +10,7 @@
     "clean": "jake clean",
     "rebuild": "jake rebuild",
     "watch": "jake watch",
-    "serve": "http-server",
+    "serve": "http-server --cors",
     "typedoc": "typedoc --includeDeclarations --excludeExternals --out target/typedocs/ target/"
   },
   "author": "Paul Gaspardo <paul@paulgaspardo.com>",

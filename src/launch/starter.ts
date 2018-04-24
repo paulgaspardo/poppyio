@@ -115,7 +115,7 @@ export function starter(dialog: Dialog, matchlist: MatchOption[]) {
 			});
 			leaving = true;
 			dialog.origins.push(getOrigin(result.url));
-			popup.location.replace(result.url);
+			(<any>dialog.proxy!.contentWindow).pio_nav(dialog.popup, result.url);
 		}).catch(error => {
 			if (cancelled) return;
 			setState({

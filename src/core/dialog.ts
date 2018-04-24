@@ -142,15 +142,6 @@ export class Dialog implements Matcher {
 	popup?: Window|null;
 	
 	/**
-	 * The `unload` listener to detect when the page is unloading and automatically
-	 * close the popup because we are good and decent and clean up after ourselves.
-	 * We save it here so that we can later remove it if the popup is closed
-	 * *before* page unload and don't need it anymore, because we are good and
-	 * decent and clean up after ourselves.
-	 */
-	private onUnload: ()=>void;
-
-	/**
 	 * The constructor.
 	 * 
 	 * Unless you have a specific reason to use this the easier way to get
@@ -167,13 +158,12 @@ export class Dialog implements Matcher {
 				resolve();
 				if (this.state !== 'closed') {
 					this.state = 'closed';
-					removeEventListener('unload', this.onUnload);
-					// Removing the iframe is what actually closes the popup
+					removeEventListener('unload', this.cancel);
+					if (this.popup) (<any>this.proxy!.contentWindow).pio_close(this.popup);
 					this.proxy!.parentNode!.removeChild(this.proxy!);
 				}
 			}
 		});
-		this.onUnload = this.cancel.bind(this);
 	}
 
 	/**
@@ -217,19 +207,7 @@ export class Dialog implements Matcher {
 			}
 			
 			// Close the popup when the page is unloaded
-			addEventListener('unload', this.onUnload);
-			proxy.contentWindow!.addEventListener('unload', () => {
-				// Since the popup's opener is actually the proxy iframe, the proxy
-				// the proxy iframe has to be the one to close the popup.
-				if (this.state === 'closed') {
-					// But we don't close until the state of the dialog is "closed"
-					// because on Firefox we get an unload event immediately when
-					// the window is loaded. Weird. Fortunately on a page unload
-					// the parent page gets it's unload event first, so we can set
-					// the state to closed just in time.
-					if (popup) popup.close();
-				}
-			});
+			addEventListener('unload', this.cancel);
 	
 			// Trigger the browser extension
 			if (typeof CustomEvent === 'function') {
@@ -238,6 +216,15 @@ export class Dialog implements Matcher {
 					{ bubbles: true, cancelable: true }
 				));
 			}
+
+			let inject = (name: string, func: Function) => {
+				(<any>proxy.contentWindow)[name] = func;
+				if (!options!.noInject) {
+					let script = proxy.contentDocument!.createElement('script');
+					script.innerText = `${name}=${func.toString()}`;
+					proxy.contentDocument!.body.appendChild(script);
+				}
+			};
 	
 			if (!this.intercepted) {
 				// Actually open the popup window.
@@ -255,7 +242,15 @@ export class Dialog implements Matcher {
 				if (!popup) {
 					throw new Error('Poppy.io: popup-blocked');
 				}
-				popup.location.replace('about:blank');
+				inject('pio_nav', (popup: Window, url: string) => {
+					popup.location.replace(url);
+				});
+				inject('pio_close', (popup: Window) => {
+					popup.close();
+				});
+				let script = proxy.contentDocument!.createElement('script');
+				(<any>proxy.contentWindow).pio_nav(popup, 'about:blank');
+				// popup.location.replace('about:blank');
 				// Detect if the popup is closed. I don't think there's an event
 				// for us to listen for so we poll. :(
 				let pollInterval = setInterval(() => {

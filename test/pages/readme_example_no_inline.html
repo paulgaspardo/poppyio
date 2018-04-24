@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Readme Example</title>
+		<meta http-equiv="content-security-policy" content="script-src 'self' 'nonce-EEEF'">
+	</head>
+<body>
+<button id='pickButton'>Pick Photo</button>
+<script type='module' nonce="EEEF">
+	import { Poppy } from "/target/use-en.mjs";
+	pickButton.onclick = async () => {
+			Poppy.any().assign({
+			iePrelude: "/",
+			noInject: true
+		});
+		let pick = await Poppy.accept("image/*");
+		if (pick) {
+			let img = new Image;
+			img.src = pick.data.location || URL.createObjectURL(pick.data.contents);
+			document.body.appendChild(img);
+		}
+	}
+</script>
+<script src="/target/bundle/poppyio.en.js" nomodule></script>
+<script nomodule nonce="EEEF">
+	poppyio.Poppy.any().assign({
+		iePrelude: "/",
+		noInject: true
+	});
+	pickButton.onclick = function () {
+		poppyio.Poppy.accept("image/*").then(function (pick) {
+			if (pick) {
+				var img = new Image;
+				img.src = pick.data.location || URL.createObjectURL(pick.data.contents);
+				document.body.appendChild(img);
+			}
+		});
+	}
+</script>
+</body></html>
