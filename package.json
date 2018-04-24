@@ -23,7 +23,7 @@
     "http-server": "^0.11.1",
     "jake": "^8.0.16",
     "promiscuous": "^0.7.1",
-    "rollup": "^0.58.1",
+    "rollup": "^0.58.2",
     "toml": "^2.3.3",
     "typedoc": "^0.11.1",
     "typescript": "^2.8.3",
