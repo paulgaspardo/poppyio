@@ -86,8 +86,8 @@ export var namecheckKeys: {[id:string]:string} = {
 export function verifyNamecheck(resolving: string, keyName: string, signed: string, result: ResolveResult): boolean {
 	let keyBytes = bytesFromBase64(namecheckKeys[keyName]);
 	let signedBytes = bytesFromBase64(signed);
-	let tmp = new Uint8Array(signed.length);
-	let mlen = crypto_sign_open(tmp, signedBytes, signed.length, keyBytes);
+	let tmp = new Uint8Array(signedBytes.length);
+	let mlen = crypto_sign_open(tmp, signedBytes, signedBytes.length, keyBytes);
 	if (mlen < 0) return false;
 	let mByteString = '';
 	for (let b = 0; b < mlen; b++) mByteString += String.fromCharCode(tmp[b]);
