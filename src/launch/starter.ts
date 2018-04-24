@@ -3,7 +3,7 @@ import { Dialog } from '../core/dialog';
 import { DialogOpener, DialogOpenerProperties, Strings, getOrigin } from '../core/dialog-opener';
 import { MatchOption } from '../core/common';
 import { match } from 'minimatch';
-
+import { version } from '../index';
 interface State {
 	openModal?: any;
 	focused?: HTMLElement|null;
@@ -77,7 +77,7 @@ export function starter(dialog: Dialog, matchlist: MatchOption[]) {
 
 	let matchInfo = $('#matchInfo')!;
 	matchlist.forEach(matchOption => {
-		let matchDetail = document.createElement('li');
+		let matchDetail = document.createElement('div');
 		matchDetail.textContent = (matchOption.accept ? 'Accept ' : 'Offer ') + (matchOption.accept || matchOption.offer) + ' '
 			+ (matchOption.hint && Array.isArray(matchOption.hint.types) ? matchOption.hint.types.join(', ') : '');
 		matchInfo.appendChild(matchDetail);
@@ -135,6 +135,11 @@ export function starter(dialog: Dialog, matchlist: MatchOption[]) {
 		});
 	});
 
+	$('#cancel')!.addEventListener('click', e => {
+		dialog.cancel();
+	});
+	$('#version')!.innerText = 'poppyio ' + version;
+
 	document.body.addEventListener('click', e => {
 		let modalAction = (e.target as HTMLElement).getAttribute('data-modal-action');
 		if (modalAction) {
@@ -173,7 +178,8 @@ function applyBaseStyles(style: (sel:string|HTMLElement, styles:{[P in keyof CSS
 		fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
 		margin: '0',
 		backgroundColor: 'white',
-		color: 'black'
+		color: 'black',
+		textAlign: 'center'
 	});
 	style('html,body', {
 		height: '100%'
@@ -203,15 +209,14 @@ function applyBaseStyles(style: (sel:string|HTMLElement, styles:{[P in keyof CSS
 		fontSize: '1.5rem'
 	});
 	style('#theForm', {
-		display: 'flex',
-		flexDirection: 'row'
+		display: 'block'
 	});
 	style('#input', {
 		width: '100%'
 	});
 	style('#theForm button', {
-		width: '10rem',
-		marginLeft: '1rem'
+		width: '6rem',
+		margin: '0.5rem'
 	});
 	style('#modal', {
 		position: 'absolute',
@@ -235,5 +240,8 @@ function applyBaseStyles(style: (sel:string|HTMLElement, styles:{[P in keyof CSS
 	});
 	style('.modal-buttons button', {
 		width: '10rem'
+	});
+	style('#matchInfo, #version', {
+		fontSize: '0.7rem'
 	});
 }
