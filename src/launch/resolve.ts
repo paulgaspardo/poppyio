@@ -80,7 +80,8 @@ function bytesFromBase64(string: string) {
 }
 
 export var namecheckKeys: {[id:string]:string} = {
-	"https://poppy.io/a/namecheck": "mLSFDoakajER2ueB82T/+zDYFNJF1xonCkNspbUL4WU="
+	"https://poppy.io/a/namecheck": "mLSFDoakajER2ueB82T/+zDYFNJF1xonCkNspbUL4WU=",
+	"https://poppy.io/#namecheck.1804": "Ypl5StmhX6X9TgATcaNjFgwMqwxi1Jk1cqgrkq6OQ1A="
 };
 
 export function verifyNamecheck(resolving: string, keyName: string, signed: string, result: ResolveResult): boolean {
