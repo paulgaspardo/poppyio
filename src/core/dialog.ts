@@ -159,7 +159,13 @@ export class Dialog implements Matcher {
 				if (this.state !== 'closed') {
 					this.state = 'closed';
 					removeEventListener('unload', this.cancel);
-					if (this.popup) (<any>this.proxy!.contentWindow).pio_close(this.popup);
+					if (this.popup) {
+						try {
+							this.popup.close();
+						} catch (e) {
+							(<any>this.proxy!.contentWindow).pio_close(this.popup);
+						}
+					}
 					this.proxy!.parentNode!.removeChild(this.proxy!);
 				}
 			}
@@ -246,8 +252,11 @@ export class Dialog implements Matcher {
 				inject('pio_close', (popup: Window) => {
 					popup.close();
 				});
-				let script = proxy.contentDocument!.createElement('script');
-				(<any>proxy.contentWindow).pio_nav(popup, 'about:blank');
+				try {
+					popup.location.replace('about:blank');
+				} catch (e) {
+					(<any>proxy.contentWindow).pio_nav(popup, 'about:blank');
+				}
 				// popup.location.replace('about:blank');
 				// Detect if the popup is closed. I don't think there's an event
 				// for us to listen for so we poll. :(
