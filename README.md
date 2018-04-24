@@ -7,27 +7,33 @@ You can also browse the contents of the package at https://js.poppy.io/0.0.4/
 ----------------------------------------
 # Poppy I/O
 
-*Note: This README, and Poppy I/O in general, is an active work in progress. It's
+*Note: This README, and Poppy I/O in general, is an early work in progress. It's
 definitely incomplete and the parts that aren't are probably wrong.*
 
-Poppy I/O is a concept for a JavaScript API and set of protocols for cloud file
-pickers and other similar things - in Poppy I/O parlance, *poppies*.
+Poppy I/O is an idea for making it easier for web applications to work together.
 
-A **poppy** is a web page that provides a service to other, client web pages,
-and is activated by the client web page opening the poppy in a popup dialog
-window. By this definition [Dropbox Choosers](https://www.dropbox.com/developers/chooser)
-and [Twitter Web Intents](https://dev.twitter.com/web/intents) would count as poppies
-(although they don't use Poppy I/O).
+It's a simple API for sending files and other kinds of data between web
+applications. What makes it simple is that the client app doesn't communicate
+directly with a service's API servers. Instead, the service app provides a mini-UI
+called a **poppy** that the client app opens in a popup dialog window which guides
+the user through all the service-specific authentication and navigation. All the
+client app has to do is send or receive a data message - the poppy handles the rest.
 
-Since poppies handle all the complicated parts of integrating with a service,
-they can present a very simple API to client applications. The idea of Poppy I/O is
-that that these APIs are so simple, we can create common APIs for any
-poppy to implement, allowing client apps to work any number of poppies.
+This kind of thing exists already - for example the
+[Dropbox Chooser](https://www.dropbox.com/developers/chooser) for picking files
+to use in your app, or [Twitter Web Intents](https://dev.twitter.com/web/intents)
+for sharing links to Twitter. But although the actions they perform and interface
+they provide are fairly generic, the actual implementation is service-specific.
 
-And if a client app can work with any random poppy implementing the right API,
-*why not let the user pick the poppy?*
+The idea of Poppy I/O is to define a generic API to allow any client to connect
+to any service, even clients and services that know nothing about each other.
+And beyond that, if clients are able to connect to arbitrary services, to define
+a way to let the *user* pick their own services to use. 
 
-Poppy I/O is [Web Intents](https://github.com/PaulKinlan/WebIntents) 2.0 😎
+The end goal then is something like Android's
+[Intent](https://developer.android.com/guide/components/intents-filters.html)
+system, but for the web. A "[Web Intents](https://github.com/PaulKinlan/WebIntents)"
+if you will. :)
 
 Here's what it looks like.
 
