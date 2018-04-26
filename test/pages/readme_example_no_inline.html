@@ -9,7 +9,7 @@
 <script type='module' nonce="EEEF">
 	import { Poppy } from "/target/use-en.mjs";
 	pickButton.onclick = async () => {
-			Poppy.any().assign({
+		Poppy.any().assign({
 			iePrelude: "/",
 			noInject: true
 		});
@@ -23,12 +23,12 @@
 </script>
 <script src="/target/bundle/poppyio.en.js" nomodule></script>
 <script nomodule nonce="EEEF">
-	poppyio.Poppy.any().assign({
+	Poppy.any().assign({
 		iePrelude: "/",
 		noInject: true
 	});
 	pickButton.onclick = function () {
-		poppyio.Poppy.accept("image/*").then(function (pick) {
+		Poppy.accept("image/*").then(function (pick) {
 			if (pick) {
 				var img = new Image;
 				img.src = pick.data.location || URL.createObjectURL(pick.data.contents);

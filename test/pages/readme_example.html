@@ -12,9 +12,9 @@
 </script>
 <script src="/target/bundle/poppyio.en.js" nomodule></script>
 <script nomodule>
-	poppyio.Poppy.any().iePrelude = "/";
+	Poppy.any().iePrelude = "/";
 	pickButton.onclick = function () {
-		poppyio.Poppy.accept("image/*").then(function (pick) {
+		Poppy.accept("image/*").then(function (pick) {
 			if (pick) {
 				var img = new Image;
 				img.src = pick.data.location || URL.createObjectURL(pick.data.contents);

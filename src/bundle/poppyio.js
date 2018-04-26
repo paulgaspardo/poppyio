@@ -6,3 +6,4 @@ import { starter } from "../../target/launch/starter.mjs";
 
 // set up base PoppyOpener
 Poppy.any().launcher = starter;
+window.Poppy = Poppy;
