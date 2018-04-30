@@ -1,0 +1,15 @@
+lang = 'es'
+langName = 'Spanish'
+
+connectPoppy='Conectar a Poppy'
+
+explanation='''Ingrese el nombre de dominio de un sitio web arriba para conectarse a su poppy.'''
+checking='Comprobando si la {busqueda} funcionara...'
+sendingYou='Enviandote a {busqueda}...'
+wontWork="Parece que la {busqueda} no funcionara."
+wontWorkNowWhat="""{busqueda} no parece ofrecer un poppy. Sin embargo, es posible que allas
+escrito el nombre incorrectamente."""
+
+ok='OK'
+go='Go'
+cancel='Cancel'
