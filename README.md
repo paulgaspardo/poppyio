@@ -2,7 +2,7 @@
 used to build the `poppyio` package. To do that run `npm run build`; the generated
 package will be in the `target/` directory.
 
-You can also browse the contents of the package at https://js.poppy.io/0.0.4/
+You can also browse the contents of the package at https://js.poppy.io/0.0.5/
 
 ----------------------------------------
 # Poppy I/O
@@ -40,7 +40,7 @@ Here's what it looks like.
 ```html
 <button id='pickButton'>Pick Photo</button>
 <script type='module'>
-  import Poppy from "https://js.poppy.io/0.0.4/use-en.mjs";
+  import Poppy from "https://js.poppy.io/0.0.5/use-en.mjs";
   pickButton.onclick = async () => {
     let pick = await Poppy.accept("image/*");
     if (pick) {
@@ -56,11 +56,11 @@ But you don't need a browser that supports ES modules or `async`/`await` for
 Poppy I/O to work; here's the same code in more conventional ES5.
 
 ```html
-<script src="https://js.poppy.io/0.0.4/target/bundle/poppyio.en.min.js" nomodule></script>
+<script src="https://js.poppy.io/0.0.5/target/bundle/poppyio.en.min.js" nomodule></script>
 <script nomodule>
-  poppyio.Poppy.any().iePrelude = "/"; // hack for Internet Explorer 10
+  Poppy.any().iePrelude = "/"; // hack for Internet Explorer 10
   pickButton.onclick = function () {
-    poppyio.Poppy.accept("image/*").then(function (pick) {
+    Poppy.accept("image/*").then(function (pick) {
       if (pick) {
         var img = new Image;
         img.src = pick.data.location || URL.createObjectURL(pick.data.contents);
@@ -227,14 +227,14 @@ but you can still add it as a dependency to your `package.json`. The package
 contains both ES modules in `.mjs` files and CommonJS ES5 modules in adjacent
 `.js` files. AMD versions of the modules are under the `amd` directory.
 ```
-  $ npm install https://js.poppy.io/0.0.4/poppyio-0.0.4.tgz
+  $ npm install https://js.poppy.io/0.0.5/poppyio-0.0.5.tgz
 ```
 You can also `bower install` the same URL if you use Bower.
 
 The simplest way to get started is to use the browser bundle. Everything get
 exported to the `poppyio` global namespace:
 ```html
-  <script src="https://js.poppy.io/0.0.4/bundle/poppyio.en.js"></script>
+  <script src="https://js.poppy.io/0.0.5/bundle/poppyio.en.js"></script>
 ```
 
 `import` or `require` the `"use-en"` module (in whatever format you're using)
@@ -257,7 +257,7 @@ The entry point to `poppyio` from the client side is the `Poppy` class.
 // import Poppy from "poppio/use-en"
 // var Poppy = require("poppyio/use-en").default;
 function pick() {
-  poppyio.Poppy.accept("image/*")
+  Poppy.accept("image/*")
     .then(function (file) {
       if (file) console.log(file.data.location || file.data.contents && "Got Blob");
     })
