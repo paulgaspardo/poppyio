@@ -56,7 +56,7 @@ But you don't need a browser that supports ES modules or `async`/`await` for
 Poppy I/O to work; here's the same code in more conventional ES5.
 
 ```html
-<script src="https://js.poppy.io/0.0.5/target/bundle/poppyio.en.min.js" nomodule></script>
+<script src="https://js.poppy.io/0.0.5/bundle/poppyio.en.min.js" nomodule></script>
 <script nomodule>
   Poppy.any().iePrelude = "/"; // hack for Internet Explorer 10
   pickButton.onclick = function () {
