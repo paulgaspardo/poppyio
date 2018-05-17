@@ -31,7 +31,7 @@ const mjsFiles = glob.sync('src/**/*.mjs')
 	.filter(name => name.indexOf('$') === -1)
 	.map(name => name.replace('src/',''));
 
-const copiedFiles = glob
+const copiedSrcFiles = glob
 	.sync('src/**/*.d.ts')
 	.concat(glob.sync('src/**/*.mjs'))
 	.filter(name => name.indexOf('$') === -1)
@@ -49,12 +49,13 @@ task('default', [].concat(
 	outputDirectories,
 	'target/package.json',
 	'target/README.md',
+	'target/LICENSE',
 	// Note: all .js modules are generated from .mjs files via the ES6->ES5 rule.
 	// AMD versions aren't mentioned here but also get generated in the amd/ tree.
 	// Compile .ts -> .mjs -> .js
 	compiledModules.map(name => `target/${name}.js`),
 	// Copy all copiedFiles
-	copiedFiles.map(name => `target/${name}`),
+	copiedSrcFiles.map(name => `target/${name}`),
 	['target/launch/nacl/crypto_sign_open.js','target/launch/nacl/crypto_sign_open.d.ts'],
 	// Localized files
 	langTags.map(tag => `target/strings-${tag}.js`),
@@ -123,10 +124,15 @@ compiledModules.forEach(name => {
 });
 
 // Copy non-compiled files from src/ to target/
-copiedFiles.forEach(name => {
+copiedSrcFiles.forEach(name => {
 	file(`target/${name}`, [`src/${name}`], () => {
 		jake.cpR(`src/${name}`, `target/${name}`);
 	});
+});
+
+// LICENSE
+file('target/LICENSE', ['LICENSE'], () => {
+	jake.cpR('LICENSE', 'target/LICENSE');
 });
 
 // ES6 modules -> ES5 modules
