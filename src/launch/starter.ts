@@ -179,7 +179,7 @@ export function starter(dialog: Dialog, matchlist: MatchOption[]) {
 
 function applyBaseStyles(style: (sel:string|HTMLElement, styles:{[P in keyof CSSStyleDeclaration]?: CSSStyleDeclaration[P]}) => void) {
 	style('body', {
-		fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+		fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
 		margin: '0',
 		backgroundColor: 'white',
 		color: 'black',
