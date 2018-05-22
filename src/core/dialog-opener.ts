@@ -305,10 +305,8 @@ function onListen(
 	let controlChannel = new MessageChannel;
 	let session: Session|undefined = undefined;
 	let requestMessage: any = {
-		'https://poppy.io/a/to-host': {
-			request: myMatchlist,
-			lang: dialog.opener!.lang
-		}
+		request: myMatchlist,
+		lang: dialog.opener!.lang
 	};
 	// Trusted origins (browser extensions and same origin) get extra information
 	// suitable for implementing a launcher
@@ -320,7 +318,7 @@ function onListen(
 		}
 	}
 	// Inform service of request and wait for connect()
-	trigger.source!.postMessage(requestMessage, trigger.origin, [controlChannel.port1]);
+	trigger.source!.postMessage({ 'https://poppy.io/a/to-host': requestMessage }, trigger.origin, [controlChannel.port1]);
 	let controlPort = controlChannel.port2;
 	controlPort.onmessage = ev => {
 		// Await connect message
