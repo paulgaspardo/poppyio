@@ -1,4 +1,5 @@
 import { MatchOption, Matcher, Session, validateMatchlist } from "./common";
+export { ServiceRequest as default }
 
 export type ServiceRequestState = 'unopened' | 'opened' | 'matching' | 'connected' | 'complete' | 'closed';
 
@@ -141,7 +142,7 @@ export class ServiceRequest implements Matcher {
 					if (!toHost) return;
 					if (toHost.expired) throw Error('Poppy.io: already-connected');
 					if (!toHost.request) return;
-					this.received = new ServiceRequest(ev, validateMatchlist(toHost.request));
+					this.received = new ServiceRequest(ev, validateMatchlist(toHost.request), toHost.launch);
 					gotRequest = true;
 				} catch (e) {
 					handler(undefined, e);
