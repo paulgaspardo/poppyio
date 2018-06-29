@@ -1,13 +1,42 @@
 import { crypto_sign_open } from "./nacl/crypto_sign_open";
 
+/**
+ * Result of resolving a domain to a poppy service URL
+ */
 export interface ResolveResult {
+	/** Poppy service URL */
 	url: string;
+	/** Origins to authorize */
 	origins?: string[];
+	/** Self-reported name */
 	name?: string;
+	/** Namecheck key name if namechecked, undefined otherwise */
 	namechecked?: string;
 }
 
-export function resolveName(domain: string, namecheck?: boolean): Promise<ResolveResult> {
+/**
+ * Create an XMLHttpRequest to retrieve a host-meta from the standard well-known
+ * location.
+ * 
+ * @param domain domain to get host-meta for
+ */
+function openWellKnownHostMetaRequest(domain: string): XMLHttpRequest {
+	let req = new XMLHttpRequest;
+	req.open('GET', 'https://' + domain + '/.well-known/host-meta.json');
+	return req;
+}
+
+/**
+ * Resolve a domain to a poppy service URL. Resolves if successful, rejects
+ * if the domain is unable to be resolved.
+ * 
+ * @param domain
+ * 	  domain name to resolve
+ * @param openHostMetaRequest
+ * 	  optional function that creates an XMLHttpRequest
+ *    to retrieve the host-meta from a nonstandard location (for testing)
+ */
+export function resolveName(domain: string, openHostMetaRequest?: (domain: string) => XMLHttpRequest): Promise<ResolveResult> {
 	return new Promise((resolve, reject) => {
 		domain = (domain||'').trim().toLowerCase();
 		if (!domain) {
@@ -16,8 +45,7 @@ export function resolveName(domain: string, namecheck?: boolean): Promise<Resolv
 		if (typeof domain.normalize === 'function') {
 			domain = domain.normalize('NFKC');
 		}
-		let req = new XMLHttpRequest;
-		req.open('GET', 'https://' + domain + '/.well-known/host-meta.json');
+		let req = (openHostMetaRequest||openWellKnownHostMetaRequest)(domain);
 		req.onload = () => {
 			if (req.status !== 200) return reject(Error('Poppy.io: lookup-error, ' + req.status));
 			try {
@@ -47,10 +75,12 @@ export function resolveName(domain: string, namecheck?: boolean): Promise<Resolv
 					break;
 				}
 				if (result) {
-					if (hostMeta.properties && (namecheck !== true)) {
+					if (hostMeta.properties) {
 						for (let keyName in namecheckKeys) {
 							if (typeof hostMeta.properties[keyName] !== 'string') continue;
-							if (verifyNamecheck(domain, keyName, hostMeta.properties[keyName], result)) break;
+							if (verifyNamecheck(domain, keyName, hostMeta.properties[keyName], result)) {
+								break;
+							}
 						}
 					}
 					return resolve(result);
@@ -81,7 +111,8 @@ function bytesFromBase64(string: string) {
 
 export var namecheckKeys: {[id:string]:string} = {
 	"https://poppy.io/a/namecheck": "mLSFDoakajER2ueB82T/+zDYFNJF1xonCkNspbUL4WU=",
-	"https://poppy.io/#namecheck.1804": "Ypl5StmhX6X9TgATcaNjFgwMqwxi1Jk1cqgrkq6OQ1A="
+	"https://poppy.io/#namecheck.1804": "Ypl5StmhX6X9TgATcaNjFgwMqwxi1Jk1cqgrkq6OQ1A=",
+	"https://poppy.io/#namecheck.1806": "24rYF+c6pBZQjuvQZpfNPNgXPZAFoRcqWODEBtTQjhE="
 };
 
 export function verifyNamecheck(resolving: string, keyName: string, signed: string, result: ResolveResult): boolean {

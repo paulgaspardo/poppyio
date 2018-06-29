@@ -5,7 +5,7 @@
   "description": "Build poppyio",
   "main": "index",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha test/unit",
     "build": "jake",
     "clean": "jake clean",
     "rebuild": "jake rebuild",
@@ -16,17 +16,21 @@
   "author": "Paul Gaspardo <paul@paulgaspardo.com>",
   "license": "MIT",
   "devDependencies": {
+    "atob": "^2.1.1",
+    "btoa": "^1.2.1",
     "escodegen": "^1.9.1",
     "esprima": "^4.0.0",
     "glob": "^7.1.2",
     "html-minifier": "^3.5.15",
     "http-server": "^0.11.1",
     "jake": "^8.0.16",
+    "mocha": "^5.2.0",
     "promiscuous": "^0.7.1",
     "rollup": "^0.58.2",
     "toml": "^2.3.3",
     "typedoc": "^0.11.1",
     "typescript": "^2.8.3",
-    "uglify-js": "^3.3.22"
+    "uglify-js": "^3.3.22",
+    "xhr-mock": "^2.4.0"
   }
 }
