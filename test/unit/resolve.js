@@ -9,6 +9,10 @@ xhrMock.setup();
 
 describe('resolveName', () => {
 
+	beforeEach(() => {
+		xhrMock.reset();
+	});
+
 	context('Rejects if the name is invalid', () => {
 		it('being missing', async () => {
 			try {
@@ -28,25 +32,23 @@ describe('resolveName', () => {
 		});
 	});
 
-	context('Resolves to the .well-known URL', async () => {
+	let HOST_META_BASE = {
+		links: [
+			{
+				rel: 'https://poppy.io/a/poppy',
+				href: 'http://www.example.com/poppy'
+			}
+		]
+	};
+
+	context('Resolves to the .well-known URL', () => {
 		const HOST_META_URL = 'https://example.com/.well-known/host-meta.json';
-		beforeEach(() => {
-			xhrMock.reset();
-		})
+
 		let setHostMeta = (data, domain) => {
 			xhrMock.get(domain ? 'https://' + domain + '/.well-known/host-meta.json' : HOST_META_URL, {
 				status: 200,
 				body: JSON.stringify(data)
 			});
-		};
-
-		let HOST_META_BASE = {
-			links: [
-				{
-					rel: 'https://poppy.io/a/poppy',
-					href: 'http://www.example.com/poppy'
-				}
-			]
 		};
 
 		it('Picks up service URL', async () => {
@@ -77,7 +79,7 @@ describe('resolveName', () => {
 			setHostMeta(HOST_META_WITH_NAMECHECK, 'example2.com');
 
 			let resolved = await resolveName('example2.com');
-			assert.equal('http://www.example.com/poppy', resolved.url);
+			assert.equal(resolved.url, 'http://www.example.com/poppy');
 			assert(!resolved.namechecked);
 			assert(!resolved.name);
 		});
@@ -87,7 +89,7 @@ describe('resolveName', () => {
 			try {
 				await resolveName('example.com');
 			} catch (e) {
-				assert(e.message.indexOf('404') != -1);
+				assert(e.message.indexOf('404') !== -1);
 				return;
 			}
 			assert.fail();
@@ -97,11 +99,40 @@ describe('resolveName', () => {
 			try {
 				await resolveName('example.com');
 			} catch (e) {
-				assert(e.message.indexOf('500') != -1);
+				assert(e.message.indexOf('500') !== -1);
 				return;
 			}
 			assert.fail();
-		})
+		});
+		it('Throws if the response is not JSON', async () => {
+			xhrMock.get(HOST_META_URL, {
+				status: 200,
+				body: 'NOT JSON'
+			});
+			try {
+				await resolveName('example.com');
+			} catch (e) {
+				assert(e.message.indexOf('JSON') !=== -1);
+				return;
+			}
+			assert.fail();
+		});
+	});
+
+	it('Uses XMLHttpRequest factory', async () => {
+		xhrMock.get('/host-meta-proxy/example3.com', {
+			status: 200,
+			body: JSON.stringify(HOST_META_BASE)
+		});
+		let called = false;
+		let result = await resolveName('example3.com', domain => {
+			called = true;
+			let req = new XMLHttpRequest;
+			req.open('GET', '/host-meta-proxy/example3.com');
+			return req;
+		});
+		assert.equal(called, true);
+		assert.equal(result.url, 'http://www.example.com/poppy');
 	});
 
 });
