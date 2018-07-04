@@ -6,7 +6,8 @@
   "main": "index",
   "scripts": {
     "test": "mocha test/unit",
-		"selenium-test": "mocha test/selenium",
+		"test-selenium": "mocha test/selenium",
+		"test-all": "mocha test/unit test/selenium",
 		"test-server": "node test/lib/server",
     "build": "jake",
     "clean": "jake clean",

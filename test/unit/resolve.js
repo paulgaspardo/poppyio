@@ -112,7 +112,7 @@ describe('resolveName', () => {
 			try {
 				await resolveName('example.com');
 			} catch (e) {
-				assert(e.message.indexOf('JSON') !=== -1);
+				assert(e.message.indexOf('JSON') !== -1);
 				return;
 			}
 			assert.fail();
