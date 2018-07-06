@@ -1,0 +1,9 @@
+language: node_js
+before_script:
+- npm run build
+- npm i geckodriver
+script:
+- npm run test
+- BROWSER=firefox xvfb-run npm run test-selenium
+node_js:
+- "8.8.1"
