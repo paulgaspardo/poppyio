@@ -1,9 +1,14 @@
 language: node_js
+node_js:
+- "8.8.1"
+sudo: required
+addons:
+  chrome: stable
 before_script:
 - npm run build
 - npm i geckodriver
+- npm i chromedriver
 script:
 - npm run test
 - BROWSER=firefox xvfb-run npm run test-selenium
-node_js:
-- "8.8.1"
+- BROWSER=chrome xvfb-run npm run test-selenium
