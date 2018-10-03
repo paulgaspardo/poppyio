@@ -56,8 +56,8 @@ But you don't need a browser that supports ES modules or `async`/`await` for
 Poppy I/O to work; here's the same code in more conventional ES5.
 
 ```html
-<script src="https://js.poppy.io/0.0.6/bundle/poppyio.en.min.js" nomodule></script>
-<script nomodule>
+<script src="https://js.poppy.io/0.0.6/bundle/poppyio.en.min.js"></script>
+<script>
   Poppy.any().iePrelude = "/"; // hack for Internet Explorer 10
   pickButton.onclick = function () {
     Poppy.accept("image/*").then(function (pick) {
@@ -369,7 +369,7 @@ something with the `client.accepts()` method.
 
 ```js
 // import PoppyService from "poppyio/poppy-service"
-// var Poppy = require("poppyio/poppy-service").default;
+// var PoppyService = require("poppyio/poppy-service").default;
 poppyio.PoppyService.onClient(function (client, error) {
   // showError and showPickUi are placeholders for your own implementation.
   if (error) {
