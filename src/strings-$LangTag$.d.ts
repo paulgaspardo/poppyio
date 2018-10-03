@@ -1,4 +1,4 @@
-/** Translated strings used by launchDialog ($Lang$) */
+/** Translated strings used by launchDialog ($LangTag$) */
 declare const strings: {[key:string]:string};
 export {
 	strings,
