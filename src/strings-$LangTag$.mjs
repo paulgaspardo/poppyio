@@ -1,4 +1,4 @@
-/** Translated strings used by launchDialog ($Lang$) */
+/** Translated strings used by launchDialog ($LangTag$) */
 var strings = $Strings$;
 export {
 	strings,

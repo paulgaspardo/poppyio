@@ -6,9 +6,9 @@
   "main": "index",
   "scripts": {
     "test": "mocha test/unit",
-		"test-selenium": "mocha test/selenium",
-		"test-all": "mocha test/unit test/selenium",
-		"test-server": "node test/lib/server",
+    "test-selenium": "mocha test/selenium",
+    "test-all": "mocha test/unit test/selenium",
+    "test-server": "node test/lib/server",
     "build": "jake",
     "clean": "jake clean",
     "rebuild": "jake rebuild",
@@ -19,23 +19,26 @@
   "author": "Paul Gaspardo <paul@paulgaspardo.com>",
   "license": "MIT",
   "devDependencies": {
-    "atob": "^2.1.1",
+    "atob": "^2.1.2",
     "btoa": "^1.2.1",
-    "escodegen": "^1.9.1",
-    "esprima": "^4.0.0",
+    "escodegen": "^1.11.0",
+    "esprima": "^4.0.1",
     "express": "^4.16.3",
-    "glob": "^7.1.2",
-    "html-minifier": "^3.5.15",
+    "glob": "^7.1.3",
+    "html-minifier": "^3.5.20",
     "http-server": "^0.11.1",
-    "jake": "^8.0.16",
+    "jake": "^8.0.18",
     "mocha": "^5.2.0",
-    "promiscuous": "^0.7.1",
-    "rollup": "^0.58.2",
+    "promiscuous": "^0.7.2",
+    "rollup": "^0.66.2",
     "selenium-webdriver": "^4.0.0-alpha.1",
     "toml": "^2.3.3",
-    "typedoc": "^0.11.1",
-    "typescript": "^2.8.3",
-    "uglify-js": "^3.3.22",
-    "xhr-mock": "^2.4.0"
+    "typedoc": "^0.12.0",
+    "typescript": "^3.1.1",
+    "uglify-js": "^3.4.9",
+    "xhr-mock": "^2.4.1"
+  },
+  "dependencies": {
+    "npm-check": "^5.9.0"
   }
 }

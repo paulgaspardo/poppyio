@@ -16,8 +16,9 @@ describe('Launch page', () => {
 		server.close();
 		driver.quit();
 	});
-	beforeEach(() => {
-		driver = new Builder().forBrowser(process.env.BROWSER || 'chrome').build();
+	beforeEach(async function () {
+		this.timeout(10000);
+		driver = (await new Builder().forBrowser(process.env.BROWSER || 'chrome').build());
 	});
 	afterEach(() => {
 		driver.close();

@@ -6,9 +6,9 @@ addons:
   chrome: stable
 before_script:
 - npm run build
-- npm i geckodriver
+#- npm i geckodriver
 - npm i chromedriver
 script:
 - npm run test
-- BROWSER=firefox xvfb-run npm run test-selenium
+#- BROWSER=firefox xvfb-run npm run test-selenium
 - BROWSER=chrome xvfb-run npm run test-selenium

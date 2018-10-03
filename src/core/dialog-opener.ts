@@ -203,7 +203,7 @@ export class DialogOpener implements DialogOpenerProperties, Matcher {
 						// Listen
 						if (body.listen) {
 							if (dialog!.state !== 'matching') {
-								ev.source!.postMessage({
+								(ev.source as Window).postMessage({
 									'https://poppy.io/a/to-host': {
 										expired: true
 									}
@@ -318,7 +318,7 @@ function onListen(
 		}
 	}
 	// Inform service of request and wait for connect()
-	trigger.source!.postMessage({ 'https://poppy.io/a/to-host': requestMessage }, trigger.origin, [controlChannel.port1]);
+	(trigger.source as Window).postMessage({ 'https://poppy.io/a/to-host': requestMessage }, trigger.origin, [controlChannel.port1]);
 	let controlPort = controlChannel.port2;
 	controlPort.onmessage = ev => {
 		// Await connect message
