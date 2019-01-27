@@ -2,7 +2,7 @@
 used to build the `poppyio` package. To do that run `npm run build`; the generated
 package will be in the `target/` directory.
 
-You can also browse the contents of the package at https://js.poppy.io/0.0.6/
+You can also browse the contents of the package at https://js.poppy.io/0.0.7/
 
 ----------------------------------------
 # Poppy I/O
@@ -40,7 +40,7 @@ Here's what it looks like.
 ```html
 <button id='pickButton'>Pick Photo</button>
 <script type='module'>
-  import Poppy from "https://js.poppy.io/0.0.6/use-en.mjs";
+  import Poppy from "https://js.poppy.io/0.0.7/use-en.mjs";
   pickButton.onclick = async () => {
     let pick = await Poppy.accept("image/*");
     if (pick) {
@@ -56,7 +56,7 @@ But you don't need a browser that supports ES modules or `async`/`await` for
 Poppy I/O to work; here's the same code in more conventional ES5.
 
 ```html
-<script src="https://js.poppy.io/0.0.6/bundle/poppyio.en.min.js"></script>
+<script src="https://js.poppy.io/0.0.7/bundle/poppyio.en.min.js"></script>
 <script>
   Poppy.any().iePrelude = "/"; // hack for Internet Explorer 10
   pickButton.onclick = function () {
@@ -227,14 +227,14 @@ but you can still add it as a dependency to your `package.json`. The package
 contains both ES modules in `.mjs` files and CommonJS ES5 modules in adjacent
 `.js` files. AMD versions of the modules are under the `amd` directory.
 ```
-  $ npm install https://js.poppy.io/0.0.6/poppyio-0.0.6.tgz
+  $ npm install https://js.poppy.io/0.0.7/poppyio-0.0.7.tgz
 ```
 You can also `bower install` the same URL if you use Bower.
 
 The simplest way to get started is to use the browser bundle. Everything get
 exported to the `poppyio` global namespace:
 ```html
-  <script src="https://js.poppy.io/0.0.6/bundle/poppyio.en.js"></script>
+  <script src="https://js.poppy.io/0.0.7/bundle/poppyio.en.js"></script>
 ```
 
 `import` or `require` the `"use-en"` module (in whatever format you're using)

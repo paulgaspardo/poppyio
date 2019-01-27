@@ -157,12 +157,12 @@ async function makeBundle(entrypoint, outputFile) {
 	let rolledup = await rollup.rollup({
 		input: entrypoint
 	});
-	let { code } = await rolledup.generate({
+	let { output } = await rolledup.generate({
 		format: 'iife',
 		name: 'poppyio',
 		intro: 'function __extends(D, B) { D.prototype = Object.create(B.prototype); D.prototype.constructor = D.constructor; }'
 	});
-	let es5 = ts.transpileModule(code, {
+	let es5 = ts.transpileModule(output[0].code, {
 		compilerOptions: {
 			module: ts.ModuleKind.None,
 			noEmitHelpers: true
